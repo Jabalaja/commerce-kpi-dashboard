@@ -1,0 +1,1092 @@
+[
+  {
+    "id": "net-profit",
+    "name": "Net Profit",
+    "section": "business",
+    "definition": "The money a webshop ultimately keeps: everything earned minus everything spent. The apex both the money-earned and money-saved branches ladder up into.",
+    "formula": "Revenue - Total Cost",
+    "unit": "currency",
+    "parents": [],
+    "levers": [
+      { "action": "Grow revenue without growing cost in step", "impact": "high", "effort": "high", "description": "Lift conversion and AOV faster than variable cost rises." },
+      { "action": "Protect margin", "impact": "high", "effort": "medium", "description": "Reduce returns, fees and discount leakage." }
+    ],
+    "benchmarks": []
+  },
+  {
+    "id": "revenue",
+    "name": "Revenue",
+    "section": "business",
+    "definition": "Total money earned from orders in a period. The headline money-earned KPI.",
+    "formula": "Orders x Average Order Value",
+    "unit": "currency",
+    "parents": [
+      { "id": "net-profit", "relationship": "additive", "note": "Revenue is the money-earned half of profit." }
+    ],
+    "levers": [
+      { "action": "Drive more qualified traffic", "impact": "high", "effort": "high" },
+      { "action": "Lift conversion rate", "impact": "high", "effort": "medium" },
+      { "action": "Increase average order value", "impact": "medium", "effort": "medium" }
+    ],
+    "benchmarks": []
+  },
+  {
+    "id": "gross-margin",
+    "name": "Gross Margin",
+    "section": "business",
+    "definition": "Share of revenue left after the variable cost of selling (goods, shipping, fees, returns). The headline money-saved KPI: lifting it is money saved.",
+    "formula": "(Revenue - Variable Costs) / Revenue x 100",
+    "unit": "%",
+    "parents": [
+      { "id": "net-profit", "relationship": "driver", "note": "Higher margin per order flows straight to profit." }
+    ],
+    "levers": [
+      { "action": "Negotiate cost of goods", "impact": "high", "effort": "medium" },
+      { "action": "Reduce discount depth", "impact": "medium", "effort": "low" },
+      { "action": "Cut returns and fee leakage", "impact": "medium", "effort": "medium" }
+    ],
+    "benchmarks": [
+      { "label": "Healthy e-commerce gross margin", "value": "40-80% (typical ~45%)", "source": "https://ledgergurus.com/good-gross-margin-for-ecommerce/" }
+    ]
+  },
+  {
+    "id": "customer-lifetime-value",
+    "name": "Customer Lifetime Value (CLV)",
+    "section": "business",
+    "definition": "Total margin a customer is expected to generate across their whole relationship with the shop. Connects retention to long-run profit.",
+    "formula": "Average Order Value x Purchase Frequency x Customer Lifespan",
+    "unit": "currency",
+    "parents": [
+      { "id": "net-profit", "relationship": "driver", "note": "Higher lifetime value per customer lifts long-run profit." }
+    ],
+    "levers": [
+      { "action": "Increase repeat purchase rate", "impact": "high", "effort": "medium" },
+      { "action": "Extend customer lifespan", "impact": "medium", "effort": "medium" }
+    ],
+    "benchmarks": [
+      { "label": "Repeat spend", "value": "Existing customers spend ~67% more than new ones", "source": "https://www.opensend.com/post/customer-retention-rate-ecommerce" },
+      { "label": "Healthy CLV:CAC ratio", "value": "~3:1 (e-commerce average ~2.8:1)", "source": "https://www.retainful.com/blog/customer-acquisition-cost-ecommerce" }
+    ]
+  },
+  {
+    "id": "orders",
+    "name": "Orders",
+    "section": "acquisition",
+    "definition": "Number of completed purchases in a period.",
+    "formula": "Sessions x Conversion Rate",
+    "unit": "count",
+    "parents": [
+      { "id": "revenue", "relationship": "multiplicative", "note": "One of the two factors of revenue." }
+    ],
+    "levers": [
+      { "action": "Improve conversion rate", "impact": "high", "effort": "medium" },
+      { "action": "Grow returning-customer orders", "impact": "medium", "effort": "medium" }
+    ],
+    "benchmarks": []
+  },
+  {
+    "id": "sessions",
+    "name": "Sessions / Traffic",
+    "section": "acquisition",
+    "definition": "Visits to the shop in a period, the top of the funnel.",
+    "formula": "Organic + Paid + Email + Social sessions",
+    "unit": "count",
+    "parents": [
+      { "id": "orders", "relationship": "multiplicative", "note": "Traffic is one factor of orders." }
+    ],
+    "levers": [
+      { "action": "Diversify acquisition channels", "impact": "high", "effort": "high" },
+      { "action": "Improve channel-to-landing relevance", "impact": "medium", "effort": "medium" }
+    ],
+    "benchmarks": []
+  },
+  {
+    "id": "conversion-rate",
+    "name": "Conversion Rate",
+    "section": "acquisition",
+    "definition": "Share of sessions that result in an order. The single most-watched funnel KPI, and the product of every funnel stage.",
+    "formula": "Product-View Rate x Add-to-Cart Rate x Cart-to-Checkout Rate x Checkout-Completion Rate",
+    "unit": "%",
+    "parents": [
+      { "id": "orders", "relationship": "multiplicative", "note": "The other factor of orders." },
+      { "id": "customer-acquisition-cost", "relationship": "inverse", "note": "A higher conversion rate spreads acquisition spend over more orders, lowering CAC." }
+    ],
+    "levers": [
+      { "action": "Fix the weakest funnel stage first", "impact": "high", "effort": "medium" },
+      { "action": "Run structured A/B tests", "impact": "medium", "effort": "medium" }
+    ],
+    "benchmarks": [
+      { "label": "Cross-industry average", "value": "~1.7-3.0% of sessions", "source": "https://www.irpcommerce.com/ecommercemarketdata.aspx", "note": "IRP Commerce market data; April 2026 ~1.70%." },
+      { "label": "Top-performing stores", "value": ">3.2% (top 20%)", "source": "https://www.btng.studio/articles/ecommerce-conversion-rate-by-industry" }
+    ]
+  },
+  {
+    "id": "bounce-rate",
+    "name": "Bounce Rate",
+    "section": "acquisition",
+    "definition": "Share of sessions that leave without interacting. Bounced sessions never enter the funnel, so a high bounce rate caps conversion.",
+    "formula": "Single-page Sessions / Total Sessions x 100",
+    "unit": "%",
+    "parents": [
+      { "id": "conversion-rate", "relationship": "inverse", "note": "Higher bounce means fewer sessions reach the funnel." }
+    ],
+    "levers": [
+      { "action": "Match landing pages to ad intent", "impact": "high", "effort": "medium" },
+      { "action": "Speed up first paint", "impact": "high", "effort": "medium" }
+    ],
+    "benchmarks": [
+      { "label": "E-commerce range", "value": "~30-55%", "source": "https://www.convertcart.com/blog/ecommerce-bounce-rate" },
+      { "label": "Market average (Apr 2026)", "value": "~46.7%", "source": "https://www.irpcommerce.com/ecommercemarketdata.aspx" }
+    ]
+  },
+  {
+    "id": "organic-sessions",
+    "name": "Organic Sessions",
+    "section": "acquisition",
+    "definition": "Sessions from unpaid search and content.",
+    "formula": "Sessions attributed to organic search / content",
+    "unit": "count",
+    "parents": [
+      { "id": "sessions", "relationship": "additive", "note": "One traffic channel summing into total sessions." }
+    ],
+    "levers": [
+      { "action": "Invest in SEO and content", "impact": "high", "effort": "high" },
+      { "action": "Fix technical crawlability", "impact": "medium", "effort": "medium" }
+    ],
+    "benchmarks": []
+  },
+  {
+    "id": "paid-sessions",
+    "name": "Paid Sessions",
+    "section": "acquisition",
+    "definition": "Sessions from paid media (search, social, display).",
+    "formula": "Ad Spend / Cost per Click",
+    "unit": "count",
+    "parents": [
+      { "id": "sessions", "relationship": "additive", "note": "One traffic channel summing into total sessions." }
+    ],
+    "levers": [
+      { "action": "Improve targeting and creative", "impact": "high", "effort": "medium" },
+      { "action": "Lower cost per click via quality score", "impact": "medium", "effort": "medium" }
+    ],
+    "benchmarks": []
+  },
+  {
+    "id": "email-sessions",
+    "name": "Email / CRM Sessions",
+    "section": "acquisition",
+    "definition": "Sessions from owned email and CRM flows. The lowest-cost, highest-converting channel.",
+    "formula": "List Size x Send Frequency x Click-Through Rate",
+    "unit": "count",
+    "parents": [
+      { "id": "sessions", "relationship": "additive", "note": "One traffic channel summing into total sessions." }
+    ],
+    "levers": [
+      { "action": "Grow and clean the list", "impact": "high", "effort": "medium" },
+      { "action": "Automate lifecycle flows", "impact": "high", "effort": "medium" }
+    ],
+    "benchmarks": []
+  },
+  {
+    "id": "social-sessions",
+    "name": "Social Sessions",
+    "section": "acquisition",
+    "definition": "Sessions from organic and paid social.",
+    "formula": "Sessions attributed to social platforms",
+    "unit": "count",
+    "parents": [
+      { "id": "sessions", "relationship": "additive", "note": "One traffic channel summing into total sessions." }
+    ],
+    "levers": [
+      { "action": "Build shoppable social content", "impact": "medium", "effort": "medium" }
+    ],
+    "benchmarks": []
+  },
+  {
+    "id": "customer-acquisition-cost",
+    "name": "Customer Acquisition Cost (CAC)",
+    "section": "acquisition",
+    "definition": "Average marketing and sales spend to win one new customer. A cost line; lowering it is money saved.",
+    "formula": "Marketing & Sales Spend / New Customers Acquired",
+    "unit": "currency",
+    "parents": [
+      { "id": "total-cost", "relationship": "cost", "note": "Acquisition spend is an operating cost." }
+    ],
+    "levers": [
+      { "action": "Shift budget to efficient channels", "impact": "high", "effort": "medium" },
+      { "action": "Raise conversion rate", "impact": "high", "effort": "medium", "description": "More orders per click lowers effective CAC." }
+    ],
+    "benchmarks": [
+      { "label": "Typical e-commerce CAC", "value": "~$60-90 (varies widely by vertical)", "source": "https://www.mobiloud.com/blog/average-customer-acquisition-cost-for-ecommerce" },
+      { "label": "By vertical", "value": "Food ~$53 up to Electronics $377+", "source": "https://eightx.co/blog/average-cac-ecommerce-vertical" }
+    ]
+  },
+  {
+    "id": "product-view-rate",
+    "name": "Product-View Rate",
+    "section": "product",
+    "definition": "Share of sessions that view at least one product. The first funnel stage after landing.",
+    "formula": "Product-Viewing Sessions / Sessions x 100",
+    "unit": "%",
+    "parents": [
+      { "id": "conversion-rate", "relationship": "multiplicative", "note": "First multiplicative stage of the conversion funnel." }
+    ],
+    "levers": [
+      { "action": "Improve navigation and merchandising", "impact": "high", "effort": "medium" },
+      { "action": "Strengthen on-site search", "impact": "medium", "effort": "medium" }
+    ],
+    "benchmarks": []
+  },
+  {
+    "id": "add-to-cart-rate",
+    "name": "Add-to-Cart Rate",
+    "section": "product",
+    "definition": "Share of sessions that add a product to the cart. Signals product-page persuasiveness and intent.",
+    "formula": "Sessions with Add-to-Cart / Sessions x 100",
+    "unit": "%",
+    "parents": [
+      { "id": "conversion-rate", "relationship": "multiplicative", "note": "Second multiplicative stage of the conversion funnel." }
+    ],
+    "levers": [
+      { "action": "Improve product detail pages", "impact": "high", "effort": "medium" },
+      { "action": "Add clear pricing and stock signals", "impact": "medium", "effort": "low" }
+    ],
+    "benchmarks": [
+      { "label": "Median (Shopify, Littledata)", "value": "~4.6%", "source": "https://www.littledata.io/average/add-to-cart-rate" },
+      { "label": "Top 20% of stores", "value": ">11.5%", "source": "https://www.littledata.io/average/add-to-cart-rate" }
+    ]
+  },
+  {
+    "id": "product-detail-page-quality",
+    "name": "Product Detail Page Quality",
+    "section": "product",
+    "definition": "How well a product page answers buying questions and builds confidence. A composite driver of add-to-cart.",
+    "formula": "Qualitative index of imagery, reviews, price clarity and stock signals",
+    "unit": "score",
+    "parents": [
+      { "id": "add-to-cart-rate", "relationship": "driver", "note": "Better PDPs lift add-to-cart." }
+    ],
+    "levers": [
+      { "action": "Add rich media and specs", "impact": "high", "effort": "medium" },
+      { "action": "Surface reviews above the fold", "impact": "medium", "effort": "low" }
+    ],
+    "benchmarks": []
+  },
+  {
+    "id": "product-imagery",
+    "name": "Product Imagery",
+    "section": "product",
+    "definition": "Quality and richness of product visuals (zoom, video, 360, lifestyle). Drives both intent and accurate expectations.",
+    "formula": "Qualitative: image count, zoom, video, 360 coverage",
+    "unit": "score",
+    "parents": [
+      { "id": "product-detail-page-quality", "relationship": "driver", "note": "Imagery is a core PDP quality factor." },
+      { "id": "return-rate", "relationship": "inverse", "note": "Accurate, rich imagery sets expectations and reduces returns." }
+    ],
+    "levers": [
+      { "action": "Add zoom, video and 360 views", "impact": "high", "effort": "medium" },
+      { "action": "Show true-to-life color and scale", "impact": "medium", "effort": "medium" }
+    ],
+    "benchmarks": []
+  },
+  {
+    "id": "product-reviews-rating",
+    "name": "Reviews & Ratings",
+    "section": "product",
+    "definition": "Volume and average rating of customer reviews. Social proof that lifts conversion and calibrates expectations.",
+    "formula": "Average Star Rating weighted by Review Volume",
+    "unit": "score",
+    "parents": [
+      { "id": "product-detail-page-quality", "relationship": "driver", "note": "Reviews are a core PDP quality factor." },
+      { "id": "return-rate", "relationship": "inverse", "note": "Reviews calibrate expectations, lowering returns." }
+    ],
+    "levers": [
+      { "action": "Automate post-purchase review requests", "impact": "high", "effort": "low" },
+      { "action": "Surface photo and fit reviews", "impact": "medium", "effort": "medium" }
+    ],
+    "benchmarks": []
+  },
+  {
+    "id": "price-clarity",
+    "name": "Price Clarity",
+    "section": "product",
+    "definition": "How early and completely the all-in price (incl. shipping and tax) is visible. Surprises later cause drop-off.",
+    "formula": "Qualitative: all-in price visible early, no late surprises",
+    "unit": "score",
+    "parents": [
+      { "id": "add-to-cart-rate", "relationship": "driver", "note": "Clear pricing builds confidence to add to cart." },
+      { "id": "cart-to-checkout-rate", "relationship": "driver", "note": "No price surprises in the cart keeps shoppers moving." }
+    ],
+    "levers": [
+      { "action": "Show shipping and tax estimates early", "impact": "high", "effort": "low" }
+    ],
+    "benchmarks": []
+  },
+  {
+    "id": "stock-availability",
+    "name": "Stock Availability",
+    "section": "product",
+    "definition": "Share of catalogue that is in stock and buyable. Out-of-stock items cannot convert.",
+    "formula": "In-Stock SKUs / Total SKUs x 100",
+    "unit": "%",
+    "parents": [
+      { "id": "add-to-cart-rate", "relationship": "driver", "note": "Out-of-stock items cannot be added to cart." }
+    ],
+    "levers": [
+      { "action": "Improve demand forecasting", "impact": "medium", "effort": "high" },
+      { "action": "Offer back-in-stock alerts", "impact": "medium", "effort": "low" }
+    ],
+    "benchmarks": []
+  },
+  {
+    "id": "site-search-quality",
+    "name": "On-Site Search Quality",
+    "section": "product",
+    "definition": "How well internal search returns relevant results. Searchers convert at much higher rates than browsers.",
+    "formula": "Qualitative: relevance, zero-result rate, synonym handling",
+    "unit": "score",
+    "parents": [
+      { "id": "product-view-rate", "relationship": "driver", "note": "Good search gets shoppers to products faster." }
+    ],
+    "levers": [
+      { "action": "Add synonyms and typo tolerance", "impact": "high", "effort": "medium" },
+      { "action": "Eliminate zero-result queries", "impact": "medium", "effort": "medium" }
+    ],
+    "benchmarks": []
+  },
+  {
+    "id": "page-load-time",
+    "name": "Page Load Time / Site Speed",
+    "section": "product",
+    "definition": "How fast pages render and become interactive. Speed influences every funnel stage from bounce to checkout.",
+    "formula": "Median Largest Contentful Paint (seconds)",
+    "unit": "seconds",
+    "parents": [
+      { "id": "product-view-rate", "relationship": "inverse", "note": "Slower pages reduce product views." },
+      { "id": "add-to-cart-rate", "relationship": "inverse", "note": "Slower pages reduce add-to-cart." },
+      { "id": "checkout-abandonment-rate", "relationship": "driver", "note": "Slow pages raise checkout abandonment." },
+      { "id": "bounce-rate", "relationship": "driver", "note": "Slow first paint raises bounce." }
+    ],
+    "levers": [
+      { "action": "Optimize images and payload", "impact": "high", "effort": "medium" },
+      { "action": "Reduce server response time", "impact": "high", "effort": "medium" }
+    ],
+    "benchmarks": [
+      { "label": "Speed to conversion (Deloitte)", "value": "+0.1s faster ⇒ +8% retail conversion, +9.1% PDP-to-cart", "source": "https://web.dev/case-studies/milliseconds-make-millions", "note": "Deloitte 'Milliseconds Make Millions', 37 brands." }
+    ]
+  },
+  {
+    "id": "server-response-time",
+    "name": "Server Response Time (TTFB)",
+    "section": "product",
+    "definition": "Time for the server to return the first byte. A major, often-overlooked component of total load time.",
+    "formula": "Time to First Byte (milliseconds)",
+    "unit": "milliseconds",
+    "parents": [
+      { "id": "page-load-time", "relationship": "driver", "note": "TTFB is a major component of load time." }
+    ],
+    "levers": [
+      { "action": "Add edge caching / CDN", "impact": "high", "effort": "medium" },
+      { "action": "Optimize backend queries", "impact": "medium", "effort": "high" }
+    ],
+    "benchmarks": []
+  },
+  {
+    "id": "image-optimization",
+    "name": "Image Optimization",
+    "section": "product",
+    "definition": "How well product and page images are compressed and delivered. Images are usually the largest part of page weight.",
+    "formula": "Qualitative: next-gen formats, compression, lazy-load, correct sizing",
+    "unit": "score",
+    "parents": [
+      { "id": "page-load-time", "relationship": "driver", "note": "Image payload is typically the largest part of page weight." }
+    ],
+    "levers": [
+      { "action": "Serve WebP/AVIF and lazy-load", "impact": "high", "effort": "low" },
+      { "action": "Size images responsively", "impact": "medium", "effort": "low" }
+    ],
+    "benchmarks": []
+  },
+  {
+    "id": "average-order-value",
+    "name": "Average Order Value (AOV)",
+    "section": "cart",
+    "definition": "Average revenue per order. The basket-size half of revenue and a factor of lifetime value.",
+    "formula": "Revenue / Orders  (= Items per Order x Average Item Price)",
+    "unit": "currency",
+    "parents": [
+      { "id": "revenue", "relationship": "multiplicative", "note": "The basket-size factor of revenue." },
+      { "id": "customer-lifetime-value", "relationship": "multiplicative", "note": "One factor of lifetime value." }
+    ],
+    "levers": [
+      { "action": "Add cross-sell and bundles", "impact": "high", "effort": "medium" },
+      { "action": "Set a free-shipping threshold above AOV", "impact": "medium", "effort": "low" }
+    ],
+    "benchmarks": [
+      { "label": "Global average (Nov 2024)", "value": "~$144 (+8.7% YoY)", "source": "https://www.oberlo.com/statistics/average-order-value" }
+    ]
+  },
+  {
+    "id": "cart-to-checkout-rate",
+    "name": "Cart-to-Checkout Rate",
+    "section": "cart",
+    "definition": "Share of carts that proceed to start checkout.",
+    "formula": "Checkouts Started / Carts Created x 100",
+    "unit": "%",
+    "parents": [
+      { "id": "conversion-rate", "relationship": "multiplicative", "note": "Third multiplicative stage of the conversion funnel." }
+    ],
+    "levers": [
+      { "action": "Show all-in price in the cart", "impact": "high", "effort": "low" },
+      { "action": "Add a persistent, reassuring cart", "impact": "medium", "effort": "medium" }
+    ],
+    "benchmarks": []
+  },
+  {
+    "id": "items-per-order",
+    "name": "Items per Order",
+    "section": "cart",
+    "definition": "Average number of units in an order. One of the two AOV factors.",
+    "formula": "Total Units Sold / Orders",
+    "unit": "count",
+    "parents": [
+      { "id": "average-order-value", "relationship": "multiplicative", "note": "Units factor of AOV." }
+    ],
+    "levers": [
+      { "action": "Recommend complementary products", "impact": "high", "effort": "medium" },
+      { "action": "Offer bundles and multipacks", "impact": "medium", "effort": "medium" }
+    ],
+    "benchmarks": []
+  },
+  {
+    "id": "average-item-price",
+    "name": "Average Item Price",
+    "section": "cart",
+    "definition": "Average realized price per unit sold. The price factor of AOV.",
+    "formula": "Revenue / Total Units Sold",
+    "unit": "currency",
+    "parents": [
+      { "id": "average-order-value", "relationship": "multiplicative", "note": "Price factor of AOV." }
+    ],
+    "levers": [
+      { "action": "Upsell to higher-value variants", "impact": "medium", "effort": "medium" },
+      { "action": "Reduce reliance on discounting", "impact": "medium", "effort": "low" }
+    ],
+    "benchmarks": []
+  },
+  {
+    "id": "cross-sell-attach-rate",
+    "name": "Cross-Sell Attach Rate",
+    "section": "cart",
+    "definition": "Share of orders that include a cross-sold (complementary) item. A direct lever on items per order.",
+    "formula": "Orders with >=1 Cross-sold Item / Orders x 100",
+    "unit": "%",
+    "parents": [
+      { "id": "items-per-order", "relationship": "driver", "note": "Cross-sell adds units to the basket." }
+    ],
+    "levers": [
+      { "action": "Add 'frequently bought together'", "impact": "high", "effort": "medium" },
+      { "action": "Cross-sell on the cart and PDP", "impact": "medium", "effort": "low" }
+    ],
+    "benchmarks": [
+      { "label": "Recommendation revenue", "value": "Recommendations drive ~10-35% of revenue; AOV +10-40%", "source": "https://wiserreview.com/blog/upselling-and-cross-selling-statistics/" }
+    ]
+  },
+  {
+    "id": "product-bundling",
+    "name": "Product Bundling",
+    "section": "cart",
+    "definition": "Selling curated multi-product bundles, raising units and value per order.",
+    "formula": "Qualitative: bundle availability and uptake",
+    "unit": "score",
+    "parents": [
+      { "id": "items-per-order", "relationship": "driver", "note": "Bundles add units per order." }
+    ],
+    "levers": [
+      { "action": "Create value bundles around hero SKUs", "impact": "high", "effort": "medium" }
+    ],
+    "benchmarks": [
+      { "label": "Bundle AOV lift", "value": "~20-30% higher AOV", "source": "https://wiserreview.com/blog/upselling-and-cross-selling-statistics/" }
+    ]
+  },
+  {
+    "id": "free-shipping-threshold",
+    "name": "Free-Shipping Threshold",
+    "section": "cart",
+    "definition": "The basket value above which shipping is free. Set above AOV, it nudges shoppers to add items, but absorbs shipping cost on qualifying orders.",
+    "formula": "Threshold set ~15-30% above current AOV",
+    "unit": "currency",
+    "parents": [
+      { "id": "items-per-order", "relationship": "driver", "note": "A threshold above AOV nudges shoppers to add items." },
+      { "id": "shipping-cost", "relationship": "cost", "note": "Absorbed shipping on qualifying orders is a cost." }
+    ],
+    "levers": [
+      { "action": "Set threshold ~15-30% above AOV", "impact": "high", "effort": "low" },
+      { "action": "Show a progress-to-free-shipping bar", "impact": "medium", "effort": "low" }
+    ],
+    "benchmarks": [
+      { "label": "AOV uplift", "value": "~12-24% higher AOV; ~58% add an item to qualify", "source": "https://www.2pointagency.com/glossary/can-free-shipping-thresholds-increase-average-order-value/" }
+    ]
+  },
+  {
+    "id": "product-recommendations",
+    "name": "Product Recommendations",
+    "section": "cart",
+    "definition": "Algorithmic suggestions that surface relevant products. Deepen browsing and drive cross-sell.",
+    "formula": "Qualitative: relevance and placement of recommendations",
+    "unit": "score",
+    "parents": [
+      { "id": "cross-sell-attach-rate", "relationship": "driver", "note": "Recommendation engines surface relevant add-ons." },
+      { "id": "product-view-rate", "relationship": "driver", "note": "Recommendations deepen browsing." }
+    ],
+    "levers": [
+      { "action": "Deploy a recommendation engine", "impact": "high", "effort": "high" },
+      { "action": "Personalize by behavior", "impact": "medium", "effort": "high" }
+    ],
+    "benchmarks": []
+  },
+  {
+    "id": "cart-transparency",
+    "name": "Cart Transparency",
+    "section": "cart",
+    "definition": "How clearly the cart shows the full cost (incl. shipping and tax) before checkout. Hidden costs are the top abandonment cause.",
+    "formula": "Qualitative: total cost visible before checkout",
+    "unit": "score",
+    "parents": [
+      { "id": "cart-to-checkout-rate", "relationship": "driver", "note": "Showing the full price in-cart prevents later drop-off." }
+    ],
+    "levers": [
+      { "action": "Show shipping and tax in the cart", "impact": "high", "effort": "low" }
+    ],
+    "benchmarks": []
+  },
+  {
+    "id": "upsell-rate",
+    "name": "Upsell Rate",
+    "section": "cart",
+    "definition": "Share of orders where the customer accepts a higher-value variant or tier.",
+    "formula": "Orders with Upsell Accepted / Orders x 100",
+    "unit": "%",
+    "parents": [
+      { "id": "average-item-price", "relationship": "driver", "note": "Upselling to higher-value variants raises item price." }
+    ],
+    "levers": [
+      { "action": "Offer good-better-best tiers", "impact": "medium", "effort": "medium" }
+    ],
+    "benchmarks": []
+  },
+  {
+    "id": "discount-depth",
+    "name": "Discount Depth",
+    "section": "cart",
+    "definition": "Average size of discounts given. Discounts cut realized price and come straight off margin. A cross-branch margin eroder.",
+    "formula": "Discount Value / Gross Order Value x 100",
+    "unit": "%",
+    "parents": [
+      { "id": "average-item-price", "relationship": "inverse", "note": "Deeper discounts cut realized item price." },
+      { "id": "gross-margin", "relationship": "inverse", "note": "Every discount point comes straight off margin." }
+    ],
+    "levers": [
+      { "action": "Replace blanket codes with targeted offers", "impact": "high", "effort": "medium" },
+      { "action": "Prefer free shipping over price cuts", "impact": "medium", "effort": "low" }
+    ],
+    "benchmarks": []
+  },
+  {
+    "id": "checkout-completion-rate",
+    "name": "Checkout Completion Rate",
+    "section": "checkout",
+    "definition": "Share of started checkouts that result in a completed order. The final, highest-leverage funnel stage.",
+    "formula": "Completed Checkouts / Started Checkouts x 100",
+    "unit": "%",
+    "parents": [
+      { "id": "conversion-rate", "relationship": "multiplicative", "note": "Final multiplicative stage of the conversion funnel." }
+    ],
+    "levers": [
+      { "action": "Offer guest checkout", "impact": "high", "effort": "low", "description": "Remove forced account creation." },
+      { "action": "Expand payment methods", "impact": "medium", "effort": "medium", "description": "Add locally preferred options." }
+    ],
+    "benchmarks": [
+      { "label": "Checkout usability upside (Baymard)", "value": "Up to +35% conversion from fixing checkout UX", "source": "https://baymard.com/lists/cart-abandonment-rate" }
+    ]
+  },
+  {
+    "id": "checkout-abandonment-rate",
+    "name": "Checkout Abandonment Rate",
+    "section": "checkout",
+    "definition": "Share of started checkouts that are abandoned before completion. The inverse of completion, and a rich source of recoverable revenue.",
+    "formula": "1 - Checkout Completion Rate (Abandoned / Started x 100)",
+    "unit": "%",
+    "parents": [
+      { "id": "checkout-completion-rate", "relationship": "inverse", "note": "Completion = 1 - abandonment." }
+    ],
+    "levers": [
+      { "action": "Remove surprise costs", "impact": "high", "effort": "medium" },
+      { "action": "Shorten the form and add wallets", "impact": "high", "effort": "medium" }
+    ],
+    "benchmarks": [
+      { "label": "Average cart abandonment (Baymard)", "value": "~70.2% (average of 59 studies)", "source": "https://baymard.com/lists/cart-abandonment-rate" }
+    ]
+  },
+  {
+    "id": "unexpected-extra-costs",
+    "name": "Unexpected Extra Costs",
+    "section": "checkout",
+    "definition": "Surprise shipping, tax or fees revealed late in checkout. The single biggest abandonment driver.",
+    "formula": "Share of abandoners citing extra costs",
+    "unit": "%",
+    "parents": [
+      { "id": "checkout-abandonment-rate", "relationship": "driver", "note": "The #1 abandonment reason (48%)." }
+    ],
+    "levers": [
+      { "action": "Show all-in pricing upfront", "impact": "high", "effort": "low" },
+      { "action": "Offer free-shipping thresholds", "impact": "medium", "effort": "low" }
+    ],
+    "benchmarks": [
+      { "label": "#1 abandonment reason (Baymard)", "value": "48% abandon over surprise extra costs", "source": "https://baymard.com/lists/cart-abandonment-rate" }
+    ]
+  },
+  {
+    "id": "checkout-form-length",
+    "name": "Checkout Form Length",
+    "section": "checkout",
+    "definition": "Number of fields a shopper must complete to check out. Each extra field adds friction.",
+    "formula": "Count of required checkout form fields",
+    "unit": "count",
+    "parents": [
+      { "id": "checkout-abandonment-rate", "relationship": "driver", "note": "Longer forms raise abandonment." }
+    ],
+    "levers": [
+      { "action": "Remove optional fields", "impact": "high", "effort": "low" },
+      { "action": "Use address autocomplete", "impact": "medium", "effort": "low" }
+    ],
+    "benchmarks": [
+      { "label": "Checkout length (Baymard)", "value": "Reducing form fields measurably lifts completion", "source": "https://baymard.com/lists/cart-abandonment-rate" }
+    ]
+  },
+  {
+    "id": "payment-method-coverage",
+    "name": "Payment Method Coverage",
+    "section": "checkout",
+    "definition": "How well the offered payment methods match local shopper preferences. A missing preferred method causes drop-off.",
+    "formula": "Count of locally relevant payment methods offered",
+    "unit": "count",
+    "parents": [
+      { "id": "checkout-abandonment-rate", "relationship": "driver", "note": "Missing a preferred payment method causes abandonment." }
+    ],
+    "levers": [
+      { "action": "Add wallets (Apple/Google Pay)", "impact": "high", "effort": "low" },
+      { "action": "Add local methods (e.g. iDEAL, SEPA, BNPL)", "impact": "medium", "effort": "medium" }
+    ],
+    "benchmarks": []
+  },
+  {
+    "id": "trust-security-signals",
+    "name": "Trust & Security Signals",
+    "section": "checkout",
+    "definition": "Visible cues that the shop and payment are safe (SSL, recognizable marks, guarantees, reviews). Distrust drives a quarter of abandonment.",
+    "formula": "Qualitative: SSL, trust badges, guarantees, recognizable payment marks",
+    "unit": "score",
+    "parents": [
+      { "id": "checkout-abandonment-rate", "relationship": "driver", "note": "Payment-security doubts cause ~25% of abandonment." },
+      { "id": "add-to-cart-rate", "relationship": "driver", "note": "Trust cues raise willingness to add to cart." }
+    ],
+    "levers": [
+      { "action": "Show recognizable trust and payment marks", "impact": "medium", "effort": "low" },
+      { "action": "Add a clear returns guarantee", "impact": "medium", "effort": "low" }
+    ],
+    "benchmarks": [
+      { "label": "Security-related abandonment (Baymard)", "value": "~25% abandon over payment-security distrust", "source": "https://baymard.com/lists/cart-abandonment-rate" }
+    ]
+  },
+  {
+    "id": "mobile-checkout-optimization",
+    "name": "Mobile Checkout Optimization",
+    "section": "checkout",
+    "definition": "How well checkout works on mobile, where most traffic is and conversion lags desktop.",
+    "formula": "Qualitative: autofill, wallets, responsive layout, tap targets",
+    "unit": "score",
+    "parents": [
+      { "id": "checkout-abandonment-rate", "relationship": "driver", "note": "Mobile converts worse; optimizing it recovers orders." }
+    ],
+    "levers": [
+      { "action": "Enable wallets and autofill on mobile", "impact": "high", "effort": "low" },
+      { "action": "Simplify mobile layout and tap targets", "impact": "medium", "effort": "medium" }
+    ],
+    "benchmarks": []
+  },
+  {
+    "id": "shipping-cost",
+    "name": "Shipping Cost",
+    "section": "fulfillment",
+    "definition": "Outbound shipping spend per order. A major margin cost line and the most-absorbed cost in e-commerce.",
+    "formula": "Outbound Shipping Spend / Orders (or % of revenue)",
+    "unit": "currency",
+    "parents": [
+      { "id": "total-cost", "relationship": "cost", "note": "Shipping is a variable cost line." },
+      { "id": "gross-margin", "relationship": "inverse", "note": "Shipping spend eats contribution margin." }
+    ],
+    "levers": [
+      { "action": "Negotiate carrier rates", "impact": "high", "effort": "medium" },
+      { "action": "Right-size packaging (dimensional weight)", "impact": "medium", "effort": "medium" }
+    ],
+    "benchmarks": [
+      { "label": "Shipping as % of revenue", "value": "~8-12% (top performers 6-9%)", "source": "https://www.finaloop.com/blog/ecommerce-shipping-cost-accounting-in-2025-complete-guide" }
+    ]
+  },
+  {
+    "id": "fulfillment-cost-per-order",
+    "name": "Fulfillment Cost per Order",
+    "section": "fulfillment",
+    "definition": "Cost to pick, pack and handle an order in the warehouse. A controllable margin cost.",
+    "formula": "Pick + Pack + Warehouse + Handling Cost / Orders",
+    "unit": "currency",
+    "parents": [
+      { "id": "total-cost", "relationship": "cost", "note": "Fulfillment is a variable cost line." },
+      { "id": "gross-margin", "relationship": "inverse", "note": "Fulfillment spend eats contribution margin." }
+    ],
+    "levers": [
+      { "action": "Improve pick/pack productivity", "impact": "high", "effort": "high" },
+      { "action": "Optimize packaging materials", "impact": "medium", "effort": "low" }
+    ],
+    "benchmarks": [
+      { "label": "Fulfillment absorbed per order", "value": "~$5-15", "source": "https://www.finaloop.com/blog/ecommerce-shipping-cost-accounting-in-2025-complete-guide" }
+    ]
+  },
+  {
+    "id": "delivery-speed",
+    "name": "Delivery Speed",
+    "section": "fulfillment",
+    "definition": "Time from order to doorstep. Slow promised delivery drives abandonment; fast, reliable delivery drives loyalty.",
+    "formula": "Median Order-to-Doorstep time (days)",
+    "unit": "days",
+    "parents": [
+      { "id": "checkout-abandonment-rate", "relationship": "driver", "note": "Slow promised delivery drives ~23% of abandonment." },
+      { "id": "repeat-purchase-rate", "relationship": "driver", "note": "Fast, reliable delivery drives repeat purchases." }
+    ],
+    "levers": [
+      { "action": "Distribute inventory closer to demand", "impact": "high", "effort": "high" },
+      { "action": "Offer clear, faster delivery options", "impact": "medium", "effort": "medium" }
+    ],
+    "benchmarks": [
+      { "label": "Slow-delivery abandonment (Baymard)", "value": "~23% abandon when delivery is too slow", "source": "https://baymard.com/lists/cart-abandonment-rate" }
+    ]
+  },
+  {
+    "id": "return-rate",
+    "name": "Return Rate",
+    "section": "fulfillment",
+    "definition": "Share of orders returned. A cross-branch KPI: returns reduce net revenue and drive reverse-logistics cost.",
+    "formula": "Returned Orders / Orders x 100",
+    "unit": "%",
+    "parents": [
+      { "id": "returns-cost", "relationship": "driver", "note": "Returns volume drives reverse-logistics cost." },
+      { "id": "revenue", "relationship": "inverse", "note": "Returned orders reduce net revenue." }
+    ],
+    "levers": [
+      { "action": "Add size/fit guidance", "impact": "high", "effort": "medium" },
+      { "action": "Improve imagery and description accuracy", "impact": "medium", "effort": "medium" }
+    ],
+    "benchmarks": [
+      { "label": "Online returns (NRF 2024)", "value": "~16.9% overall retail; online ~20%", "source": "https://www.richpanel.com/learn/ecommerce-return-rates", "note": "Cites National Retail Federation." },
+      { "label": "Apparel", "value": "~20-40%", "source": "https://www.richpanel.com/learn/ecommerce-return-rates" }
+    ]
+  },
+  {
+    "id": "returns-cost",
+    "name": "Returns Cost",
+    "section": "fulfillment",
+    "definition": "Total cost of handling returns: reverse shipping, inspection, restocking and write-offs.",
+    "formula": "Reverse Logistics + Restocking + Write-offs per period",
+    "unit": "currency",
+    "parents": [
+      { "id": "total-cost", "relationship": "cost", "note": "Returns handling is a variable cost line." },
+      { "id": "gross-margin", "relationship": "inverse", "note": "Returns cost eats contribution margin." }
+    ],
+    "levers": [
+      { "action": "Lower the return rate at source", "impact": "high", "effort": "medium" },
+      { "action": "Streamline restocking/grading", "impact": "medium", "effort": "medium" }
+    ],
+    "benchmarks": []
+  },
+  {
+    "id": "reverse-logistics-cost",
+    "name": "Reverse Logistics Cost per Return",
+    "section": "fulfillment",
+    "definition": "Cost to process one return: return shipping, inspection and restocking.",
+    "formula": "Return Shipping + Inspection + Restock Cost / Return",
+    "unit": "currency",
+    "parents": [
+      { "id": "returns-cost", "relationship": "cost", "note": "Per-return processing cost." }
+    ],
+    "levers": [
+      { "action": "Use regional return hubs", "impact": "medium", "effort": "high" },
+      { "action": "Automate return grading", "impact": "medium", "effort": "medium" }
+    ],
+    "benchmarks": []
+  },
+  {
+    "id": "carrier-rate",
+    "name": "Carrier Rate",
+    "section": "fulfillment",
+    "definition": "Negotiated blended cost per parcel by carrier, zone and weight. Sets the base of shipping cost.",
+    "formula": "Blended Cost per Parcel (carrier/zone/weight)",
+    "unit": "currency",
+    "parents": [
+      { "id": "shipping-cost", "relationship": "driver", "note": "Negotiated carrier rates set the base shipping cost." }
+    ],
+    "levers": [
+      { "action": "Tender volume across carriers", "impact": "high", "effort": "medium" },
+      { "action": "Use regional carriers for some zones", "impact": "medium", "effort": "medium" }
+    ],
+    "benchmarks": []
+  },
+  {
+    "id": "packaging-cost",
+    "name": "Packaging Cost",
+    "section": "fulfillment",
+    "definition": "Materials cost per shipped order.",
+    "formula": "Packaging Materials Cost / Order",
+    "unit": "currency",
+    "parents": [
+      { "id": "fulfillment-cost-per-order", "relationship": "driver", "note": "Packaging is part of per-order fulfillment cost." }
+    ],
+    "levers": [
+      { "action": "Right-size and standardize boxes", "impact": "medium", "effort": "low" }
+    ],
+    "benchmarks": []
+  },
+  {
+    "id": "warehouse-efficiency",
+    "name": "Warehouse Efficiency",
+    "section": "fulfillment",
+    "definition": "Productivity of pick, pack and ship operations. Drives per-order handling cost.",
+    "formula": "Orders Fulfilled / Labor Hour (or cost per pick)",
+    "unit": "ratio",
+    "parents": [
+      { "id": "fulfillment-cost-per-order", "relationship": "driver", "note": "Pick/pack productivity sets handling cost." }
+    ],
+    "levers": [
+      { "action": "Optimize pick paths and slotting", "impact": "high", "effort": "high" },
+      { "action": "Add automation where volume justifies it", "impact": "medium", "effort": "high" }
+    ],
+    "benchmarks": []
+  },
+  {
+    "id": "repeat-purchase-rate",
+    "name": "Repeat Purchase Rate",
+    "section": "retention",
+    "definition": "Share of customers who buy more than once. The core retention KPI; small lifts compound into lifetime value.",
+    "formula": "Customers with >=2 Orders / Total Customers x 100",
+    "unit": "%",
+    "parents": [
+      { "id": "orders", "relationship": "driver", "note": "Returning customers generate additional orders." },
+      { "id": "customer-lifetime-value", "relationship": "driver", "note": "More repeat purchases extend lifetime value." }
+    ],
+    "levers": [
+      { "action": "Build lifecycle email/CRM flows", "impact": "high", "effort": "medium" },
+      { "action": "Launch a loyalty program", "impact": "medium", "effort": "high" }
+    ],
+    "benchmarks": [
+      { "label": "E-commerce average", "value": "~28% (25-30% is strong)", "source": "https://www.opensend.com/post/repeat-purchase-rate-ecommerce" },
+      { "label": "Compounding effect", "value": "27% buy again after the 1st order; 54% after the 3rd", "source": "https://www.opensend.com/post/repeat-purchase-rate-ecommerce" }
+    ]
+  },
+  {
+    "id": "purchase-frequency",
+    "name": "Purchase Frequency",
+    "section": "retention",
+    "definition": "How often a customer orders in a period. A multiplicative factor of lifetime value.",
+    "formula": "Orders / Unique Customers per period",
+    "unit": "count",
+    "parents": [
+      { "id": "customer-lifetime-value", "relationship": "multiplicative", "note": "Frequency factor of CLV." }
+    ],
+    "levers": [
+      { "action": "Trigger replenishment reminders", "impact": "medium", "effort": "medium" },
+      { "action": "Offer subscription options", "impact": "high", "effort": "high" }
+    ],
+    "benchmarks": []
+  },
+  {
+    "id": "customer-lifespan",
+    "name": "Customer Lifespan",
+    "section": "retention",
+    "definition": "Average duration a customer keeps buying. A multiplicative factor of lifetime value.",
+    "formula": "Average active relationship duration (years)",
+    "unit": "years",
+    "parents": [
+      { "id": "customer-lifetime-value", "relationship": "multiplicative", "note": "Lifespan factor of CLV." }
+    ],
+    "levers": [
+      { "action": "Reduce churn with proactive care", "impact": "high", "effort": "medium" }
+    ],
+    "benchmarks": []
+  },
+  {
+    "id": "email-engagement",
+    "name": "Email / CRM Engagement",
+    "section": "retention",
+    "definition": "How actively customers open, click and convert on owned email and CRM flows. Brings customers back at near-zero marginal cost.",
+    "formula": "Open / Click / Conversion rates of CRM flows",
+    "unit": "%",
+    "parents": [
+      { "id": "repeat-purchase-rate", "relationship": "driver", "note": "Owned-channel engagement brings customers back." },
+      { "id": "email-sessions", "relationship": "driver", "note": "Engagement drives email-sourced sessions." }
+    ],
+    "levers": [
+      { "action": "Segment and personalize flows", "impact": "high", "effort": "medium" },
+      { "action": "Win back lapsing customers", "impact": "medium", "effort": "low" }
+    ],
+    "benchmarks": []
+  },
+  {
+    "id": "loyalty-program",
+    "name": "Loyalty Program",
+    "section": "retention",
+    "definition": "Rewards, points or tiers that incentivize repeat purchase.",
+    "formula": "Qualitative: enrolled share and reward structure",
+    "unit": "score",
+    "parents": [
+      { "id": "repeat-purchase-rate", "relationship": "driver", "note": "Rewards increase repeat rate." }
+    ],
+    "levers": [
+      { "action": "Reward second and third purchases", "impact": "medium", "effort": "high" }
+    ],
+    "benchmarks": []
+  },
+  {
+    "id": "post-purchase-experience",
+    "name": "Post-Purchase Experience",
+    "section": "retention",
+    "definition": "The quality of everything after checkout: tracking, packaging, onboarding and support. Builds loyalty and reduces returns.",
+    "formula": "Qualitative: tracking, unboxing, onboarding, support quality",
+    "unit": "score",
+    "parents": [
+      { "id": "repeat-purchase-rate", "relationship": "driver", "note": "A smooth post-purchase experience builds loyalty." },
+      { "id": "return-rate", "relationship": "inverse", "note": "Good onboarding and care reduce returns." }
+    ],
+    "levers": [
+      { "action": "Add proactive order tracking", "impact": "high", "effort": "medium" },
+      { "action": "Provide product onboarding content", "impact": "medium", "effort": "low" }
+    ],
+    "benchmarks": []
+  },
+  {
+    "id": "total-cost",
+    "name": "Total Cost",
+    "section": "cost",
+    "definition": "All money spent to earn revenue: goods, fulfillment, shipping, fees, returns, acquisition and service. Lowering it is money saved.",
+    "formula": "COGS + Fulfillment + Shipping + Fees + Returns + Acquisition + Cost to Serve",
+    "unit": "currency",
+    "parents": [
+      { "id": "net-profit", "relationship": "cost", "note": "Total spend; reducing it is money saved." }
+    ],
+    "levers": [
+      { "action": "Attack the largest cost lines first", "impact": "high", "effort": "medium" }
+    ],
+    "benchmarks": []
+  },
+  {
+    "id": "cogs",
+    "name": "Cost of Goods Sold (COGS)",
+    "section": "cost",
+    "definition": "Direct landed cost of the products sold. The primary driver of gross margin.",
+    "formula": "Units Sold x Landed Unit Cost",
+    "unit": "currency",
+    "parents": [
+      { "id": "total-cost", "relationship": "cost", "note": "The largest variable cost line for most shops." },
+      { "id": "gross-margin", "relationship": "inverse", "note": "COGS is the primary driver of gross margin." }
+    ],
+    "levers": [
+      { "action": "Negotiate supplier terms and MOQs", "impact": "high", "effort": "medium" },
+      { "action": "Reduce inbound freight and duties", "impact": "medium", "effort": "medium" }
+    ],
+    "benchmarks": [
+      { "label": "COGS as % of revenue", "value": "~20-50% (target 20-40%)", "source": "https://ledgergurus.com/good-gross-margin-for-ecommerce/" }
+    ]
+  },
+  {
+    "id": "landed-unit-cost",
+    "name": "Landed Unit Cost",
+    "section": "cost",
+    "definition": "Fully loaded cost to get one unit into the warehouse, ready to sell.",
+    "formula": "Supplier Price + Inbound Freight + Duties per unit",
+    "unit": "currency",
+    "parents": [
+      { "id": "cogs", "relationship": "driver", "note": "Per-unit landed cost drives total COGS." }
+    ],
+    "levers": [
+      { "action": "Consolidate suppliers for volume pricing", "impact": "high", "effort": "high" },
+      { "action": "Optimize inbound freight mode", "impact": "medium", "effort": "medium" }
+    ],
+    "benchmarks": []
+  },
+  {
+    "id": "payment-processing-fees",
+    "name": "Payment Processing Fees",
+    "section": "cost",
+    "definition": "Fees paid on each transaction to processors and networks. A small percentage that compounds across every order.",
+    "formula": "Transactions x (Interchange + Assessment + Gateway markup)",
+    "unit": "currency",
+    "parents": [
+      { "id": "total-cost", "relationship": "cost", "note": "A per-transaction cost line." },
+      { "id": "gross-margin", "relationship": "inverse", "note": "Fees eat contribution margin on every order." }
+    ],
+    "levers": [
+      { "action": "Renegotiate processor markup", "impact": "medium", "effort": "medium" },
+      { "action": "Steer to lower-cost payment methods", "impact": "medium", "effort": "medium" }
+    ],
+    "benchmarks": [
+      { "label": "Blended processing fee", "value": "~2.4% (range 1.3-3.5%)", "source": "https://www.clearlypayments.com/blog/statistics-on-how-much-merchants-pay-for-payment-processing-in-2024/" }
+    ]
+  },
+  {
+    "id": "cost-to-serve",
+    "name": "Cost to Serve",
+    "section": "cost",
+    "definition": "Cost of customer support and service per order. Often driven by avoidable delivery and returns issues.",
+    "formula": "Support + Service Cost / Orders",
+    "unit": "currency",
+    "parents": [
+      { "id": "total-cost", "relationship": "cost", "note": "Service and support is an operating cost line." }
+    ],
+    "levers": [
+      { "action": "Deflect contacts with self-service", "impact": "high", "effort": "medium" },
+      { "action": "Fix root causes (delivery, returns)", "impact": "medium", "effort": "medium" }
+    ],
+    "benchmarks": []
+  },
+  {
+    "id": "contact-rate",
+    "name": "Support Contact Rate",
+    "section": "cost",
+    "definition": "Support contacts per order. Each contact carries a cost; many are avoidable.",
+    "formula": "Support Contacts / Orders x 100",
+    "unit": "%",
+    "parents": [
+      { "id": "cost-to-serve", "relationship": "driver", "note": "Each contact adds to cost to serve." }
+    ],
+    "levers": [
+      { "action": "Reduce 'where is my order' contacts", "impact": "high", "effort": "medium", "description": "Proactive tracking removes the top contact reason." }
+    ],
+    "benchmarks": []
+  },
+  {
+    "id": "self-service-rate",
+    "name": "Self-Service Resolution Rate",
+    "section": "cost",
+    "definition": "Share of customer issues resolved without an agent. Deflects contacts and lowers cost to serve.",
+    "formula": "Issues Resolved via Self-service / Total Issues x 100",
+    "unit": "%",
+    "parents": [
+      { "id": "cost-to-serve", "relationship": "driver", "note": "Higher self-service lowers cost to serve." },
+      { "id": "contact-rate", "relationship": "inverse", "note": "Self-service deflects agent contacts." }
+    ],
+    "levers": [
+      { "action": "Build a help center and order self-service", "impact": "high", "effort": "medium" },
+      { "action": "Add a deflecting chatbot", "impact": "medium", "effort": "medium" }
+    ],
+    "benchmarks": []
+  }
+]

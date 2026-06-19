@@ -1,0 +1,19 @@
+{
+  "name": "commerce-kpi-dashboard",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "description": "DIGITALL Webshop KPI Explorer — interactive decomposition of e-commerce KPIs from operational levers up to money earned and money saved.",
+  "scripts": {
+    "build:data": "tsx scripts/build-data.ts",
+    "validate:data": "tsx scripts/build-data.ts --check",
+    "build": "npm run build:data"
+  },
+  "devDependencies": {
+    "@types/node": "^22.19.21",
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.3",
+    "zod": "^3.24.1",
+    "zod-to-json-schema": "^3.24.1"
+  }
+}
