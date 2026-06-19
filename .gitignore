@@ -3,3 +3,7 @@ dist
 *.local
 .DS_Store
 .vite
+
+# Playwright MCP scratch output (snapshots, screenshots)
+.playwright-mcp/
+/*.png

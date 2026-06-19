@@ -1,2 +1,0 @@
-[    3746ms] [ERROR] Refused to apply style from 'https://digitall.com/wp-content/uploads/elementor/css/custom-apple-webkit.min.css?ver=1781506459' because its MIME type ('text/html') is not a supported stylesheet MIME type, and strict MIME checking is enabled. @ https://digitall.com/:0
-[    3760ms] [LOG] JQMIGRATE: Migrate is installed, version 3.4.1 @ https://digitall.com/wp-includes/js/jquery/jquery-migrate.min.js?ver=3.4.1:1
