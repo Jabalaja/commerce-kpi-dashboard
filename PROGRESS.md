@@ -11,7 +11,12 @@ Authoritative spec: `GOAL.md`. This file tracks phase status. Commit at the end 
 - [x] **Phase 3 — Brand extraction**: Playwright against https://digitall.com/ (confirmed: "DIGITALL – a technology company"). Extracted logo colors (sky `#64c7f3` + deep blue `#1818bf`), ink `#383838`, surface `#edeeef`, Montserrat, rounded sky CTAs. Tokens in `src/theme/brand.ts`; real wordmark SVG in `src/theme/digitallLogo.ts`.
 - [x] **Phase 4 — Build app**: Vite + React + TS strict, `base=/commerce-kpi-dashboard/`. React Flow (`@xyflow/react`) + ELK layered auto-layout (consulted via Context7). Overview, click-to-focus drilldown (dim others), detail panel (definition/formula/levers/sourced benchmarks), path-to-top (full upward cone), section color grouping, presenter/full-screen. `npm run build` + `tsc --noEmit` pass.
 - [x] **Phase 5 — Verify with Playwright MCP**: Verified locally — overview renders (87 nodes centered), click → focus shows only connected, detail panel correct, path-to-top highlights both branches, **0 console errors** (added inline SVG favicon), layout holds at 768px.
-- [ ] **Phase 6 — Deploy to GitHub Pages**: Pages source = GitHub Actions, push, confirm workflow + live URL, Playwright pass against live site.
+- [x] **Phase 6 — Deploy to GitHub Pages**: Repo made public (Chris approved; Pages needs public on Free plan), Pages source = GitHub Actions, pushed to `main`. Workflow green (validate + build + deploy). **Live + verified with Playwright (87 nodes, focus works, 0 console errors):** https://jabalaja.github.io/commerce-kpi-dashboard/
+
+## ✅ Done
+
+All phases complete. Live URL: **https://jabalaja.github.io/commerce-kpi-dashboard/**
+Extend the data via `data/kpis.json` + push to `main` → CI redeploys automatically.
 
 ## Key decisions (log as made)
 
