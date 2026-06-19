@@ -1,50 +1,56 @@
 [
   {
     "id": "business",
-    "label": "Business Outcomes",
-    "description": "The top-level KPIs a client's CFO cares about: money earned (Revenue) and money saved (Gross Margin), rolling up into Net Profit and Customer Lifetime Value.",
+    "label": "Business & Unit Economics",
+    "description": "The top-level KPIs a client's CFO cares about: money earned (Revenue) and money saved (Gross Margin), rolling up into Net Profit, plus contribution margin and lifetime value.",
     "order": 0
   },
   {
     "id": "acquisition",
-    "label": "Traffic & Acquisition",
-    "description": "How visitors arrive and what it costs to bring them. Sessions by channel, conversion rate, bounce, and customer acquisition cost.",
+    "label": "Acquisition & Traffic",
+    "description": "How visitors arrive and what they cost: sessions by channel, conversion rate, bounce, cost per click, return on ad spend, and customer acquisition cost.",
     "order": 1
   },
   {
     "id": "product",
     "label": "Product & Browsing",
-    "description": "The browsing experience that turns sessions into intent: product views, add-to-cart, page speed, imagery, reviews, and search.",
+    "description": "Turning sessions into intent: product-view and add-to-cart rates, search performance, ratings, reviews, imagery, and stock availability.",
     "order": 2
   },
   {
-    "id": "cart",
+    "id": "basket",
     "label": "Cart & Basket Value",
-    "description": "What ends up in the basket and how big it is: cart progression, items per order, item price, cross-sell, bundling, and discounting.",
+    "description": "What ends up in the basket and how big it is: cart progression, items per order, item price, cross-sell, bundling, upsell, and discounting.",
     "order": 3
   },
   {
     "id": "checkout",
-    "label": "Checkout",
-    "description": "The final, highest-leverage conversion step: checkout completion and the friction points that drive abandonment.",
+    "label": "Conversion & Checkout",
+    "description": "The final, highest-leverage step: checkout completion, the measurable reasons behind abandonment, and the operational metrics that drive them.",
     "order": 4
+  },
+  {
+    "id": "performance",
+    "label": "Site Performance",
+    "description": "The measurable technical foundation: Core Web Vitals, server response, payload sizes, caching, and uptime. The engineer-actionable bottom of the tree.",
+    "order": 5
   },
   {
     "id": "fulfillment",
     "label": "Fulfillment & Returns",
-    "description": "Getting the order to the customer and handling what comes back: shipping cost, fulfillment cost, delivery speed, and returns.",
-    "order": 5
+    "description": "Getting orders out and handling what comes back: shipping and fulfillment cost, delivery time, on-time rate, returns, and reverse logistics.",
+    "order": 6
   },
   {
     "id": "retention",
     "label": "Retention & Loyalty",
-    "description": "Turning one purchase into many: repeat purchase rate, purchase frequency, lifespan, email engagement, and loyalty.",
-    "order": 6
+    "description": "Turning one purchase into many: repeat purchase rate, frequency, lifespan, churn, loyalty enrollment, email engagement, and NPS.",
+    "order": 7
   },
   {
     "id": "cost",
     "label": "Cost & Margin",
-    "description": "The cost lines that erode margin: cost of goods, payment processing fees, and cost to serve. Lowering these is money saved.",
-    "order": 7
+    "description": "The cost lines that erode margin: cost of goods, inventory carrying cost, payment fees, chargebacks, and cost to serve. Lowering these is money saved.",
+    "order": 8
   }
 ]

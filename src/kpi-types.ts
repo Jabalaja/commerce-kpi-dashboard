@@ -28,8 +28,9 @@ export type SectionId =
   | 'business'
   | 'acquisition'
   | 'product'
-  | 'cart'
+  | 'basket'
   | 'checkout'
+  | 'performance'
   | 'fulfillment'
   | 'retention'
   | 'cost';

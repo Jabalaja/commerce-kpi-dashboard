@@ -6,51 +6,57 @@ export const dataset: KpiDataset = {
   "sections": [
     {
       "id": "business",
-      "label": "Business Outcomes",
-      "description": "The top-level KPIs a client's CFO cares about: money earned (Revenue) and money saved (Gross Margin), rolling up into Net Profit and Customer Lifetime Value.",
+      "label": "Business & Unit Economics",
+      "description": "The top-level KPIs a client's CFO cares about: money earned (Revenue) and money saved (Gross Margin), rolling up into Net Profit, plus contribution margin and lifetime value.",
       "order": 0
     },
     {
       "id": "acquisition",
-      "label": "Traffic & Acquisition",
-      "description": "How visitors arrive and what it costs to bring them. Sessions by channel, conversion rate, bounce, and customer acquisition cost.",
+      "label": "Acquisition & Traffic",
+      "description": "How visitors arrive and what they cost: sessions by channel, conversion rate, bounce, cost per click, return on ad spend, and customer acquisition cost.",
       "order": 1
     },
     {
       "id": "product",
       "label": "Product & Browsing",
-      "description": "The browsing experience that turns sessions into intent: product views, add-to-cart, page speed, imagery, reviews, and search.",
+      "description": "Turning sessions into intent: product-view and add-to-cart rates, search performance, ratings, reviews, imagery, and stock availability.",
       "order": 2
     },
     {
-      "id": "cart",
+      "id": "basket",
       "label": "Cart & Basket Value",
-      "description": "What ends up in the basket and how big it is: cart progression, items per order, item price, cross-sell, bundling, and discounting.",
+      "description": "What ends up in the basket and how big it is: cart progression, items per order, item price, cross-sell, bundling, upsell, and discounting.",
       "order": 3
     },
     {
       "id": "checkout",
-      "label": "Checkout",
-      "description": "The final, highest-leverage conversion step: checkout completion and the friction points that drive abandonment.",
+      "label": "Conversion & Checkout",
+      "description": "The final, highest-leverage step: checkout completion, the measurable reasons behind abandonment, and the operational metrics that drive them.",
       "order": 4
+    },
+    {
+      "id": "performance",
+      "label": "Site Performance",
+      "description": "The measurable technical foundation: Core Web Vitals, server response, payload sizes, caching, and uptime. The engineer-actionable bottom of the tree.",
+      "order": 5
     },
     {
       "id": "fulfillment",
       "label": "Fulfillment & Returns",
-      "description": "Getting the order to the customer and handling what comes back: shipping cost, fulfillment cost, delivery speed, and returns.",
-      "order": 5
+      "description": "Getting orders out and handling what comes back: shipping and fulfillment cost, delivery time, on-time rate, returns, and reverse logistics.",
+      "order": 6
     },
     {
       "id": "retention",
       "label": "Retention & Loyalty",
-      "description": "Turning one purchase into many: repeat purchase rate, purchase frequency, lifespan, email engagement, and loyalty.",
-      "order": 6
+      "description": "Turning one purchase into many: repeat purchase rate, frequency, lifespan, churn, loyalty enrollment, email engagement, and NPS.",
+      "order": 7
     },
     {
       "id": "cost",
       "label": "Cost & Margin",
-      "description": "The cost lines that erode margin: cost of goods, payment processing fees, and cost to serve. Lowering these is money saved.",
-      "order": 7
+      "description": "The cost lines that erode margin: cost of goods, inventory carrying cost, payment fees, chargebacks, and cost to serve. Lowering these is money saved.",
+      "order": 8
     }
   ],
   "nodes": [
@@ -64,16 +70,14 @@ export const dataset: KpiDataset = {
       "parents": [],
       "levers": [
         {
-          "action": "Grow revenue without growing cost in step",
+          "action": "Grow revenue faster than variable cost",
           "impact": "high",
-          "effort": "high",
-          "description": "Lift conversion and AOV faster than variable cost rises."
+          "effort": "high"
         },
         {
-          "action": "Protect margin",
+          "action": "Protect margin (returns, fees, discounts)",
           "impact": "high",
-          "effort": "medium",
-          "description": "Reduce returns, fees and discount leakage."
+          "effort": "medium"
         }
       ],
       "benchmarks": [],
@@ -81,8 +85,41 @@ export const dataset: KpiDataset = {
       "childrenIds": [
         "revenue",
         "gross-margin",
+        "contribution-margin-per-order",
         "customer-lifetime-value",
         "total-cost"
+      ]
+    },
+    {
+      "id": "contribution-margin-per-order",
+      "name": "Contribution Margin per Order",
+      "section": "business",
+      "definition": "Money left from an average order after all variable costs (goods, shipping, fulfillment, fees). What each order actually contributes to fixed cost and profit.",
+      "formula": "Average Order Value - Variable Cost per Order",
+      "unit": "currency",
+      "parents": [
+        {
+          "id": "net-profit",
+          "relationship": "driver",
+          "note": "Each order's contribution scales to profit."
+        }
+      ],
+      "levers": [
+        {
+          "action": "Raise AOV without raising variable cost",
+          "impact": "high",
+          "effort": "medium"
+        },
+        {
+          "action": "Reduce per-order fulfillment and shipping",
+          "impact": "medium",
+          "effort": "medium"
+        }
+      ],
+      "benchmarks": [],
+      "level": 2,
+      "childrenIds": [
+        "average-order-value"
       ]
     },
     {
@@ -90,7 +127,7 @@ export const dataset: KpiDataset = {
       "name": "Customer Lifetime Value (CLV)",
       "section": "business",
       "definition": "Total margin a customer is expected to generate across their whole relationship with the shop. Connects retention to long-run profit.",
-      "formula": "Average Order Value x Purchase Frequency x Customer Lifespan",
+      "formula": "Average Order Value x Purchase Frequency x Customer Lifespan x Gross Margin %",
       "unit": "currency",
       "parents": [
         {
@@ -152,12 +189,7 @@ export const dataset: KpiDataset = {
           "effort": "medium"
         },
         {
-          "action": "Reduce discount depth",
-          "impact": "medium",
-          "effort": "low"
-        },
-        {
-          "action": "Cut returns and fee leakage",
+          "action": "Cut returns, fee and discount leakage",
           "impact": "medium",
           "effort": "medium"
         }
@@ -171,11 +203,12 @@ export const dataset: KpiDataset = {
       ],
       "level": 2,
       "childrenIds": [
-        "discount-depth",
+        "discount-rate",
         "shipping-cost",
         "fulfillment-cost-per-order",
         "returns-cost",
         "cogs",
+        "inventory-carrying-cost",
         "payment-processing-fees"
       ]
     },
@@ -200,13 +233,8 @@ export const dataset: KpiDataset = {
           "effort": "high"
         },
         {
-          "action": "Lift conversion rate",
+          "action": "Lift conversion rate and AOV",
           "impact": "high",
-          "effort": "medium"
-        },
-        {
-          "action": "Increase average order value",
-          "impact": "medium",
           "effort": "medium"
         }
       ],
@@ -247,6 +275,7 @@ export const dataset: KpiDataset = {
         "fulfillment-cost-per-order",
         "returns-cost",
         "cogs",
+        "inventory-carrying-cost",
         "payment-processing-fees",
         "cost-to-serve"
       ]
@@ -274,14 +303,13 @@ export const dataset: KpiDataset = {
         {
           "action": "Raise conversion rate",
           "impact": "high",
-          "effort": "medium",
-          "description": "More orders per click lowers effective CAC."
+          "effort": "medium"
         }
       ],
       "benchmarks": [
         {
           "label": "Typical e-commerce CAC",
-          "value": "~$60-90 (varies widely by vertical)",
+          "value": "~$60-90 (varies by vertical)",
           "source": "https://www.mobiloud.com/blog/average-customer-acquisition-cost-for-ecommerce"
         },
         {
@@ -292,7 +320,8 @@ export const dataset: KpiDataset = {
       ],
       "level": 3,
       "childrenIds": [
-        "conversion-rate"
+        "conversion-rate",
+        "return-on-ad-spend"
       ]
     },
     {
@@ -314,11 +343,6 @@ export const dataset: KpiDataset = {
           "action": "Improve conversion rate",
           "impact": "high",
           "effort": "medium"
-        },
-        {
-          "action": "Grow returning-customer orders",
-          "impact": "medium",
-          "effort": "medium"
         }
       ],
       "benchmarks": [],
@@ -332,7 +356,7 @@ export const dataset: KpiDataset = {
     {
       "id": "average-order-value",
       "name": "Average Order Value (AOV)",
-      "section": "cart",
+      "section": "basket",
       "definition": "Average revenue per order. The basket-size half of revenue and a factor of lifetime value.",
       "formula": "Revenue / Orders  (= Items per Order x Average Item Price)",
       "unit": "currency",
@@ -346,6 +370,11 @@ export const dataset: KpiDataset = {
           "id": "customer-lifetime-value",
           "relationship": "multiplicative",
           "note": "One factor of lifetime value."
+        },
+        {
+          "id": "contribution-margin-per-order",
+          "relationship": "driver",
+          "note": "Higher AOV lifts contribution per order."
         }
       ],
       "levers": [
@@ -446,8 +475,43 @@ export const dataset: KpiDataset = {
       "level": 3,
       "childrenIds": [
         "contact-rate",
-        "self-service-rate"
+        "self-service-resolution-rate"
       ]
+    },
+    {
+      "id": "inventory-carrying-cost",
+      "name": "Inventory Carrying Cost",
+      "section": "cost",
+      "definition": "Annual cost of holding inventory (capital, storage, obsolescence, insurance) as a share of inventory value.",
+      "formula": "Annual Holding Cost / Average Inventory Value x 100",
+      "unit": "%",
+      "parents": [
+        {
+          "id": "total-cost",
+          "relationship": "cost",
+          "note": "Holding stock ties up cash and incurs cost."
+        },
+        {
+          "id": "gross-margin",
+          "relationship": "inverse",
+          "note": "Obsolescence and markdowns erode margin."
+        }
+      ],
+      "levers": [
+        {
+          "action": "Improve inventory turnover",
+          "impact": "high",
+          "effort": "medium"
+        },
+        {
+          "action": "Cut dead and slow-moving stock",
+          "impact": "medium",
+          "effort": "medium"
+        }
+      ],
+      "benchmarks": [],
+      "level": 3,
+      "childrenIds": []
     },
     {
       "id": "payment-processing-fees",
@@ -488,7 +552,9 @@ export const dataset: KpiDataset = {
         }
       ],
       "level": 3,
-      "childrenIds": []
+      "childrenIds": [
+        "chargeback-rate"
+      ]
     },
     {
       "id": "fulfillment-cost-per-order",
@@ -530,8 +596,7 @@ export const dataset: KpiDataset = {
       ],
       "level": 3,
       "childrenIds": [
-        "packaging-cost",
-        "warehouse-efficiency"
+        "orders-per-labor-hour"
       ]
     },
     {
@@ -558,18 +623,13 @@ export const dataset: KpiDataset = {
           "action": "Lower the return rate at source",
           "impact": "high",
           "effort": "medium"
-        },
-        {
-          "action": "Streamline restocking/grading",
-          "impact": "medium",
-          "effort": "medium"
         }
       ],
       "benchmarks": [],
       "level": 3,
       "childrenIds": [
         "return-rate",
-        "reverse-logistics-cost"
+        "reverse-logistics-cost-per-return"
       ]
     },
     {
@@ -577,7 +637,7 @@ export const dataset: KpiDataset = {
       "name": "Shipping Cost",
       "section": "fulfillment",
       "definition": "Outbound shipping spend per order. A major margin cost line and the most-absorbed cost in e-commerce.",
-      "formula": "Outbound Shipping Spend / Orders (or % of revenue)",
+      "formula": "Outbound Shipping Spend / Orders",
       "unit": "currency",
       "parents": [
         {
@@ -612,8 +672,8 @@ export const dataset: KpiDataset = {
       ],
       "level": 3,
       "childrenIds": [
-        "free-shipping-threshold",
-        "carrier-rate"
+        "free-shipping-eligibility-rate",
+        "carrier-cost-per-parcel"
       ]
     },
     {
@@ -621,8 +681,8 @@ export const dataset: KpiDataset = {
       "name": "Customer Lifespan",
       "section": "retention",
       "definition": "Average duration a customer keeps buying. A multiplicative factor of lifetime value.",
-      "formula": "Average active relationship duration (years)",
-      "unit": "years",
+      "formula": "Average active relationship duration (months)",
+      "unit": "months",
       "parents": [
         {
           "id": "customer-lifetime-value",
@@ -639,7 +699,9 @@ export const dataset: KpiDataset = {
       ],
       "benchmarks": [],
       "level": 3,
-      "childrenIds": []
+      "childrenIds": [
+        "churn-rate"
+      ]
     },
     {
       "id": "purchase-frequency",
@@ -660,22 +722,19 @@ export const dataset: KpiDataset = {
           "action": "Trigger replenishment reminders",
           "impact": "medium",
           "effort": "medium"
-        },
-        {
-          "action": "Offer subscription options",
-          "impact": "high",
-          "effort": "high"
         }
       ],
       "benchmarks": [],
       "level": 3,
-      "childrenIds": []
+      "childrenIds": [
+        "subscription-rate"
+      ]
     },
     {
       "id": "conversion-rate",
       "name": "Conversion Rate",
       "section": "acquisition",
-      "definition": "Share of sessions that result in an order. The single most-watched funnel KPI, and the product of every funnel stage.",
+      "definition": "Share of sessions that result in an order. The most-watched funnel KPI and the product of every funnel stage.",
       "formula": "Product-View Rate x Add-to-Cart Rate x Cart-to-Checkout Rate x Checkout-Completion Rate",
       "unit": "%",
       "parents": [
@@ -687,18 +746,13 @@ export const dataset: KpiDataset = {
         {
           "id": "customer-acquisition-cost",
           "relationship": "inverse",
-          "note": "A higher conversion rate spreads acquisition spend over more orders, lowering CAC."
+          "note": "More orders per click lowers effective CAC."
         }
       ],
       "levers": [
         {
           "action": "Fix the weakest funnel stage first",
           "impact": "high",
-          "effort": "medium"
-        },
-        {
-          "action": "Run structured A/B tests",
-          "impact": "medium",
           "effort": "medium"
         }
       ],
@@ -707,7 +761,7 @@ export const dataset: KpiDataset = {
           "label": "Cross-industry average",
           "value": "~1.7-3.0% of sessions",
           "source": "https://www.irpcommerce.com/ecommercemarketdata.aspx",
-          "note": "IRP Commerce market data; April 2026 ~1.70%."
+          "note": "IRP Commerce; April 2026 ~1.70%."
         },
         {
           "label": "Top-performing stores",
@@ -717,12 +771,42 @@ export const dataset: KpiDataset = {
       ],
       "level": 4,
       "childrenIds": [
-        "bounce-rate",
         "product-view-rate",
         "add-to-cart-rate",
+        "internal-search-conversion-rate",
         "cart-to-checkout-rate",
         "checkout-completion-rate"
       ]
+    },
+    {
+      "id": "return-on-ad-spend",
+      "name": "Return on Ad Spend (ROAS)",
+      "section": "acquisition",
+      "definition": "Revenue generated per unit of ad spend. Higher ROAS means cheaper, more efficient acquisition.",
+      "formula": "Paid-Channel Revenue / Ad Spend",
+      "unit": "ratio",
+      "parents": [
+        {
+          "id": "customer-acquisition-cost",
+          "relationship": "inverse",
+          "note": "Higher ROAS lowers effective CAC."
+        }
+      ],
+      "levers": [
+        {
+          "action": "Cut wasted spend on poor keywords/audiences",
+          "impact": "high",
+          "effort": "medium"
+        },
+        {
+          "action": "Improve landing-page relevance",
+          "impact": "medium",
+          "effort": "medium"
+        }
+      ],
+      "benchmarks": [],
+      "level": 4,
+      "childrenIds": []
     },
     {
       "id": "sessions",
@@ -743,11 +827,6 @@ export const dataset: KpiDataset = {
           "action": "Diversify acquisition channels",
           "impact": "high",
           "effort": "high"
-        },
-        {
-          "action": "Improve channel-to-landing relevance",
-          "impact": "medium",
-          "effort": "medium"
         }
       ],
       "benchmarks": [],
@@ -762,7 +841,7 @@ export const dataset: KpiDataset = {
     {
       "id": "average-item-price",
       "name": "Average Item Price",
-      "section": "cart",
+      "section": "basket",
       "definition": "Average realized price per unit sold. The price factor of AOV.",
       "formula": "Revenue / Total Units Sold",
       "unit": "currency",
@@ -778,24 +857,19 @@ export const dataset: KpiDataset = {
           "action": "Upsell to higher-value variants",
           "impact": "medium",
           "effort": "medium"
-        },
-        {
-          "action": "Reduce reliance on discounting",
-          "impact": "medium",
-          "effort": "low"
         }
       ],
       "benchmarks": [],
       "level": 4,
       "childrenIds": [
-        "upsell-rate",
-        "discount-depth"
+        "upsell-take-rate",
+        "discount-rate"
       ]
     },
     {
       "id": "items-per-order",
       "name": "Items per Order",
-      "section": "cart",
+      "section": "basket",
       "definition": "Average number of units in an order. One of the two AOV factors.",
       "formula": "Total Units Sold / Orders",
       "unit": "count",
@@ -811,26 +885,51 @@ export const dataset: KpiDataset = {
           "action": "Recommend complementary products",
           "impact": "high",
           "effort": "medium"
-        },
-        {
-          "action": "Offer bundles and multipacks",
-          "impact": "medium",
-          "effort": "medium"
         }
       ],
       "benchmarks": [],
       "level": 4,
       "childrenIds": [
         "cross-sell-attach-rate",
-        "product-bundling",
-        "free-shipping-threshold"
+        "bundle-attach-rate",
+        "free-shipping-eligibility-rate"
       ]
+    },
+    {
+      "id": "chargeback-rate",
+      "name": "Chargeback Rate",
+      "section": "cost",
+      "definition": "Share of transactions disputed and charged back. Each carries fees and lost goods on top of the refund.",
+      "formula": "Chargebacks / Transactions x 100",
+      "unit": "%",
+      "parents": [
+        {
+          "id": "payment-processing-fees",
+          "relationship": "driver",
+          "note": "Chargebacks add fees and penalties to processing cost."
+        }
+      ],
+      "levers": [
+        {
+          "action": "Add fraud screening and 3-D Secure",
+          "impact": "high",
+          "effort": "medium"
+        },
+        {
+          "action": "Use clear billing descriptors",
+          "impact": "medium",
+          "effort": "low"
+        }
+      ],
+      "benchmarks": [],
+      "level": 4,
+      "childrenIds": []
     },
     {
       "id": "contact-rate",
       "name": "Support Contact Rate",
       "section": "cost",
-      "definition": "Support contacts per order. Each contact carries a cost; many are avoidable.",
+      "definition": "Support contacts per 100 orders. Each contact carries a cost; many are avoidable.",
       "formula": "Support Contacts / Orders x 100",
       "unit": "%",
       "parents": [
@@ -842,16 +941,17 @@ export const dataset: KpiDataset = {
       ],
       "levers": [
         {
-          "action": "Reduce 'where is my order' contacts",
+          "action": "Remove 'where is my order' contacts with proactive tracking",
           "impact": "high",
-          "effort": "medium",
-          "description": "Proactive tracking removes the top contact reason."
+          "effort": "medium"
         }
       ],
       "benchmarks": [],
       "level": 4,
       "childrenIds": [
-        "self-service-rate"
+        "on-time-delivery-rate",
+        "pick-accuracy-rate",
+        "self-service-resolution-rate"
       ]
     },
     {
@@ -885,17 +985,17 @@ export const dataset: KpiDataset = {
       "childrenIds": []
     },
     {
-      "id": "carrier-rate",
-      "name": "Carrier Rate",
+      "id": "carrier-cost-per-parcel",
+      "name": "Carrier Cost per Parcel",
       "section": "fulfillment",
       "definition": "Negotiated blended cost per parcel by carrier, zone and weight. Sets the base of shipping cost.",
-      "formula": "Blended Cost per Parcel (carrier/zone/weight)",
+      "formula": "Total Carrier Spend / Parcels Shipped",
       "unit": "currency",
       "parents": [
         {
           "id": "shipping-cost",
           "relationship": "driver",
-          "note": "Negotiated carrier rates set the base shipping cost."
+          "note": "Negotiated parcel rates set the base shipping cost."
         }
       ],
       "levers": [
@@ -915,24 +1015,29 @@ export const dataset: KpiDataset = {
       "childrenIds": []
     },
     {
-      "id": "packaging-cost",
-      "name": "Packaging Cost",
+      "id": "orders-per-labor-hour",
+      "name": "Orders per Labor Hour",
       "section": "fulfillment",
-      "definition": "Materials cost per shipped order.",
-      "formula": "Packaging Materials Cost / Order",
-      "unit": "currency",
+      "definition": "Warehouse productivity: orders fulfilled per labor hour. Higher productivity lowers per-order fulfillment cost.",
+      "formula": "Orders Fulfilled / Warehouse Labor Hours",
+      "unit": "ratio",
       "parents": [
         {
           "id": "fulfillment-cost-per-order",
-          "relationship": "driver",
-          "note": "Packaging is part of per-order fulfillment cost."
+          "relationship": "inverse",
+          "note": "Higher productivity lowers cost per order."
         }
       ],
       "levers": [
         {
-          "action": "Right-size and standardize boxes",
+          "action": "Optimize pick paths and slotting",
+          "impact": "high",
+          "effort": "high"
+        },
+        {
+          "action": "Add automation where volume justifies it",
           "impact": "medium",
-          "effort": "low"
+          "effort": "high"
         }
       ],
       "benchmarks": [],
@@ -985,13 +1090,13 @@ export const dataset: KpiDataset = {
       ],
       "level": 4,
       "childrenIds": [
-        "product-imagery",
-        "product-reviews-rating",
-        "post-purchase-experience"
+        "average-product-rating",
+        "images-per-product",
+        "pick-accuracy-rate"
       ]
     },
     {
-      "id": "reverse-logistics-cost",
+      "id": "reverse-logistics-cost-per-return",
       "name": "Reverse Logistics Cost per Return",
       "section": "fulfillment",
       "definition": "Cost to process one return: return shipping, inspection and restocking.",
@@ -1000,8 +1105,8 @@ export const dataset: KpiDataset = {
       "parents": [
         {
           "id": "returns-cost",
-          "relationship": "cost",
-          "note": "Per-return processing cost."
+          "relationship": "driver",
+          "note": "Per-return cost scales total returns cost."
         }
       ],
       "levers": [
@@ -1021,29 +1126,29 @@ export const dataset: KpiDataset = {
       "childrenIds": []
     },
     {
-      "id": "warehouse-efficiency",
-      "name": "Warehouse Efficiency",
-      "section": "fulfillment",
-      "definition": "Productivity of pick, pack and ship operations. Drives per-order handling cost.",
-      "formula": "Orders Fulfilled / Labor Hour (or cost per pick)",
-      "unit": "ratio",
+      "id": "churn-rate",
+      "name": "Customer Churn Rate",
+      "section": "retention",
+      "definition": "Share of customers who lapse and stop buying in a period. The inverse force on customer lifespan.",
+      "formula": "Lapsed Customers / Active Customers at Start x 100",
+      "unit": "%",
       "parents": [
         {
-          "id": "fulfillment-cost-per-order",
-          "relationship": "driver",
-          "note": "Pick/pack productivity sets handling cost."
+          "id": "customer-lifespan",
+          "relationship": "inverse",
+          "note": "Higher churn shortens lifespan."
         }
       ],
       "levers": [
         {
-          "action": "Optimize pick paths and slotting",
+          "action": "Win back lapsing customers",
           "impact": "high",
-          "effort": "high"
+          "effort": "medium"
         },
         {
-          "action": "Add automation where volume justifies it",
+          "action": "Fix the top churn reasons",
           "impact": "medium",
-          "effort": "high"
+          "effort": "medium"
         }
       ],
       "benchmarks": [],
@@ -1095,54 +1200,37 @@ export const dataset: KpiDataset = {
       ],
       "level": 4,
       "childrenIds": [
-        "delivery-speed",
-        "email-engagement",
-        "loyalty-program",
-        "post-purchase-experience"
+        "average-delivery-time",
+        "on-time-delivery-rate",
+        "loyalty-enrollment-rate",
+        "email-click-through-rate",
+        "net-promoter-score"
       ]
     },
     {
-      "id": "bounce-rate",
-      "name": "Bounce Rate",
-      "section": "acquisition",
-      "definition": "Share of sessions that leave without interacting. Bounced sessions never enter the funnel, so a high bounce rate caps conversion.",
-      "formula": "Single-page Sessions / Total Sessions x 100",
+      "id": "subscription-rate",
+      "name": "Subscription Rate",
+      "section": "retention",
+      "definition": "Share of orders placed via subscription. Subscriptions lock in frequency and lifetime value.",
+      "formula": "Subscription Orders / Orders x 100",
       "unit": "%",
       "parents": [
         {
-          "id": "conversion-rate",
-          "relationship": "inverse",
-          "note": "Higher bounce means fewer sessions reach the funnel."
+          "id": "purchase-frequency",
+          "relationship": "driver",
+          "note": "Subscriptions raise purchase frequency."
         }
       ],
       "levers": [
         {
-          "action": "Match landing pages to ad intent",
+          "action": "Offer subscribe-and-save on consumables",
           "impact": "high",
-          "effort": "medium"
-        },
-        {
-          "action": "Speed up first paint",
-          "impact": "high",
-          "effort": "medium"
+          "effort": "high"
         }
       ],
-      "benchmarks": [
-        {
-          "label": "E-commerce range",
-          "value": "~30-55%",
-          "source": "https://www.convertcart.com/blog/ecommerce-bounce-rate"
-        },
-        {
-          "label": "Market average (Apr 2026)",
-          "value": "~46.7%",
-          "source": "https://www.irpcommerce.com/ecommercemarketdata.aspx"
-        }
-      ],
-      "level": 5,
-      "childrenIds": [
-        "page-load-time"
-      ]
+      "benchmarks": [],
+      "level": 4,
+      "childrenIds": []
     },
     {
       "id": "email-sessions",
@@ -1160,11 +1248,6 @@ export const dataset: KpiDataset = {
       ],
       "levers": [
         {
-          "action": "Grow and clean the list",
-          "impact": "high",
-          "effort": "medium"
-        },
-        {
           "action": "Automate lifecycle flows",
           "impact": "high",
           "effort": "medium"
@@ -1173,7 +1256,7 @@ export const dataset: KpiDataset = {
       "benchmarks": [],
       "level": 5,
       "childrenIds": [
-        "email-engagement"
+        "email-click-through-rate"
       ]
     },
     {
@@ -1195,11 +1278,6 @@ export const dataset: KpiDataset = {
           "action": "Invest in SEO and content",
           "impact": "high",
           "effort": "high"
-        },
-        {
-          "action": "Fix technical crawlability",
-          "impact": "medium",
-          "effort": "medium"
         }
       ],
       "benchmarks": [],
@@ -1224,11 +1302,6 @@ export const dataset: KpiDataset = {
         {
           "action": "Improve targeting and creative",
           "impact": "high",
-          "effort": "medium"
-        },
-        {
-          "action": "Lower cost per click via quality score",
-          "impact": "medium",
           "effort": "medium"
         }
       ],
@@ -1262,9 +1335,40 @@ export const dataset: KpiDataset = {
       "childrenIds": []
     },
     {
+      "id": "bundle-attach-rate",
+      "name": "Bundle Attach Rate",
+      "section": "basket",
+      "definition": "Share of orders that include a curated multi-product bundle.",
+      "formula": "Orders with a Bundle / Orders x 100",
+      "unit": "%",
+      "parents": [
+        {
+          "id": "items-per-order",
+          "relationship": "driver",
+          "note": "Bundles add units per order."
+        }
+      ],
+      "levers": [
+        {
+          "action": "Create value bundles around hero SKUs",
+          "impact": "high",
+          "effort": "medium"
+        }
+      ],
+      "benchmarks": [
+        {
+          "label": "Bundle AOV lift",
+          "value": "~20-30% higher AOV",
+          "source": "https://wiserreview.com/blog/upselling-and-cross-selling-statistics/"
+        }
+      ],
+      "level": 5,
+      "childrenIds": []
+    },
+    {
       "id": "cart-to-checkout-rate",
       "name": "Cart-to-Checkout Rate",
-      "section": "cart",
+      "section": "basket",
       "definition": "Share of carts that proceed to start checkout.",
       "formula": "Checkouts Started / Carts Created x 100",
       "unit": "%",
@@ -1272,7 +1376,7 @@ export const dataset: KpiDataset = {
         {
           "id": "conversion-rate",
           "relationship": "multiplicative",
-          "note": "Third multiplicative stage of the conversion funnel."
+          "note": "Third multiplicative stage of the funnel."
         }
       ],
       "levers": [
@@ -1280,24 +1384,18 @@ export const dataset: KpiDataset = {
           "action": "Show all-in price in the cart",
           "impact": "high",
           "effort": "low"
-        },
-        {
-          "action": "Add a persistent, reassuring cart",
-          "impact": "medium",
-          "effort": "medium"
         }
       ],
       "benchmarks": [],
       "level": 5,
       "childrenIds": [
-        "price-clarity",
-        "cart-transparency"
+        "cart-abandonment-rate"
       ]
     },
     {
       "id": "cross-sell-attach-rate",
       "name": "Cross-Sell Attach Rate",
-      "section": "cart",
+      "section": "basket",
       "definition": "Share of orders that include a cross-sold (complementary) item. A direct lever on items per order.",
       "formula": "Orders with >=1 Cross-sold Item / Orders x 100",
       "unit": "%",
@@ -1313,11 +1411,6 @@ export const dataset: KpiDataset = {
           "action": "Add 'frequently bought together'",
           "impact": "high",
           "effort": "medium"
-        },
-        {
-          "action": "Cross-sell on the cart and PDP",
-          "impact": "medium",
-          "effort": "low"
         }
       ],
       "benchmarks": [
@@ -1329,14 +1422,14 @@ export const dataset: KpiDataset = {
       ],
       "level": 5,
       "childrenIds": [
-        "product-recommendations"
+        "recommendation-ctr"
       ]
     },
     {
-      "id": "discount-depth",
-      "name": "Discount Depth",
-      "section": "cart",
-      "definition": "Average size of discounts given. Discounts cut realized price and come straight off margin. A cross-branch margin eroder.",
+      "id": "discount-rate",
+      "name": "Discount Rate",
+      "section": "basket",
+      "definition": "Average discount given as a share of gross order value. Discounts cut realized price and come straight off margin.",
       "formula": "Discount Value / Gross Order Value x 100",
       "unit": "%",
       "parents": [
@@ -1368,17 +1461,17 @@ export const dataset: KpiDataset = {
       "childrenIds": []
     },
     {
-      "id": "free-shipping-threshold",
-      "name": "Free-Shipping Threshold",
-      "section": "cart",
-      "definition": "The basket value above which shipping is free. Set above AOV, it nudges shoppers to add items, but absorbs shipping cost on qualifying orders.",
-      "formula": "Threshold set ~15-30% above current AOV",
-      "unit": "currency",
+      "id": "free-shipping-eligibility-rate",
+      "name": "Free-Shipping Eligibility Rate",
+      "section": "basket",
+      "definition": "Share of orders that reach the free-shipping threshold. A threshold above AOV nudges bigger baskets, but absorbs shipping on qualifying orders.",
+      "formula": "Orders Above Free-Shipping Threshold / Orders x 100",
+      "unit": "%",
       "parents": [
         {
           "id": "items-per-order",
           "relationship": "driver",
-          "note": "A threshold above AOV nudges shoppers to add items."
+          "note": "Chasing the threshold adds items to the basket."
         },
         {
           "id": "shipping-cost",
@@ -1409,40 +1502,9 @@ export const dataset: KpiDataset = {
       "childrenIds": []
     },
     {
-      "id": "product-bundling",
-      "name": "Product Bundling",
-      "section": "cart",
-      "definition": "Selling curated multi-product bundles, raising units and value per order.",
-      "formula": "Qualitative: bundle availability and uptake",
-      "unit": "score",
-      "parents": [
-        {
-          "id": "items-per-order",
-          "relationship": "driver",
-          "note": "Bundles add units per order."
-        }
-      ],
-      "levers": [
-        {
-          "action": "Create value bundles around hero SKUs",
-          "impact": "high",
-          "effort": "medium"
-        }
-      ],
-      "benchmarks": [
-        {
-          "label": "Bundle AOV lift",
-          "value": "~20-30% higher AOV",
-          "source": "https://wiserreview.com/blog/upselling-and-cross-selling-statistics/"
-        }
-      ],
-      "level": 5,
-      "childrenIds": []
-    },
-    {
-      "id": "upsell-rate",
-      "name": "Upsell Rate",
-      "section": "cart",
+      "id": "upsell-take-rate",
+      "name": "Upsell Take Rate",
+      "section": "basket",
       "definition": "Share of orders where the customer accepts a higher-value variant or tier.",
       "formula": "Orders with Upsell Accepted / Orders x 100",
       "unit": "%",
@@ -1450,7 +1512,7 @@ export const dataset: KpiDataset = {
         {
           "id": "average-item-price",
           "relationship": "driver",
-          "note": "Upselling to higher-value variants raises item price."
+          "note": "Upselling raises realized item price."
         }
       ],
       "levers": [
@@ -1475,21 +1537,19 @@ export const dataset: KpiDataset = {
         {
           "id": "conversion-rate",
           "relationship": "multiplicative",
-          "note": "Final multiplicative stage of the conversion funnel."
+          "note": "Final multiplicative stage of the funnel."
         }
       ],
       "levers": [
         {
           "action": "Offer guest checkout",
           "impact": "high",
-          "effort": "low",
-          "description": "Remove forced account creation."
+          "effort": "low"
         },
         {
           "action": "Expand payment methods",
           "impact": "medium",
-          "effort": "medium",
-          "description": "Add locally preferred options."
+          "effort": "medium"
         }
       ],
       "benchmarks": [
@@ -1501,11 +1561,13 @@ export const dataset: KpiDataset = {
       ],
       "level": 5,
       "childrenIds": [
-        "checkout-abandonment-rate"
+        "checkout-abandonment-rate",
+        "mobile-checkout-completion-rate",
+        "uptime"
       ]
     },
     {
-      "id": "self-service-rate",
+      "id": "self-service-resolution-rate",
       "name": "Self-Service Resolution Rate",
       "section": "cost",
       "definition": "Share of customer issues resolved without an agent. Deflects contacts and lowers cost to serve.",
@@ -1514,8 +1576,8 @@ export const dataset: KpiDataset = {
       "parents": [
         {
           "id": "cost-to-serve",
-          "relationship": "driver",
-          "note": "Higher self-service lowers cost to serve."
+          "relationship": "inverse",
+          "note": "More self-service lowers cost to serve."
         },
         {
           "id": "contact-rate",
@@ -1540,6 +1602,71 @@ export const dataset: KpiDataset = {
       "childrenIds": []
     },
     {
+      "id": "on-time-delivery-rate",
+      "name": "On-Time Delivery Rate",
+      "section": "fulfillment",
+      "definition": "Share of orders delivered by the promised date. Reliability builds trust and prevents support contacts.",
+      "formula": "On-Time Deliveries / Total Deliveries x 100",
+      "unit": "%",
+      "parents": [
+        {
+          "id": "repeat-purchase-rate",
+          "relationship": "driver",
+          "note": "Reliable delivery builds loyalty."
+        },
+        {
+          "id": "contact-rate",
+          "relationship": "inverse",
+          "note": "On-time delivery removes 'where is my order' contacts."
+        }
+      ],
+      "levers": [
+        {
+          "action": "Set realistic delivery promises",
+          "impact": "high",
+          "effort": "low"
+        },
+        {
+          "action": "Hold carriers to SLAs",
+          "impact": "medium",
+          "effort": "medium"
+        }
+      ],
+      "benchmarks": [],
+      "level": 5,
+      "childrenIds": []
+    },
+    {
+      "id": "pick-accuracy-rate",
+      "name": "Pick Accuracy Rate",
+      "section": "fulfillment",
+      "definition": "Share of orders picked and shipped correctly. Errors cause returns and support contacts.",
+      "formula": "Accurate Orders / Total Orders x 100",
+      "unit": "%",
+      "parents": [
+        {
+          "id": "return-rate",
+          "relationship": "inverse",
+          "note": "Wrong items get returned."
+        },
+        {
+          "id": "contact-rate",
+          "relationship": "inverse",
+          "note": "Wrong items generate support contacts."
+        }
+      ],
+      "levers": [
+        {
+          "action": "Add barcode/scan verification at pack",
+          "impact": "high",
+          "effort": "medium"
+        }
+      ],
+      "benchmarks": [],
+      "level": 5,
+      "childrenIds": []
+    },
+    {
       "id": "add-to-cart-rate",
       "name": "Add-to-Cart Rate",
       "section": "product",
@@ -1550,7 +1677,7 @@ export const dataset: KpiDataset = {
         {
           "id": "conversion-rate",
           "relationship": "multiplicative",
-          "note": "Second multiplicative stage of the conversion funnel."
+          "note": "Second multiplicative stage of the funnel."
         }
       ],
       "levers": [
@@ -1558,11 +1685,6 @@ export const dataset: KpiDataset = {
           "action": "Improve product detail pages",
           "impact": "high",
           "effort": "medium"
-        },
-        {
-          "action": "Add clear pricing and stock signals",
-          "impact": "medium",
-          "effort": "low"
         }
       ],
       "benchmarks": [
@@ -1579,11 +1701,46 @@ export const dataset: KpiDataset = {
       ],
       "level": 5,
       "childrenIds": [
-        "product-detail-page-quality",
-        "price-clarity",
-        "stock-availability",
+        "average-product-rating",
+        "review-coverage-rate",
+        "images-per-product",
+        "out-of-stock-rate",
+        "pdp-bounce-rate",
         "page-load-time",
-        "trust-security-signals"
+        "interaction-to-next-paint",
+        "cumulative-layout-shift"
+      ]
+    },
+    {
+      "id": "internal-search-conversion-rate",
+      "name": "Internal Search Conversion Rate",
+      "section": "product",
+      "definition": "Conversion rate of sessions that use on-site search. Searchers signal strong intent and convert well above browsers.",
+      "formula": "Orders from Search Sessions / Search Sessions x 100",
+      "unit": "%",
+      "parents": [
+        {
+          "id": "conversion-rate",
+          "relationship": "driver",
+          "note": "Search users convert higher, lifting overall conversion."
+        }
+      ],
+      "levers": [
+        {
+          "action": "Add synonyms and typo tolerance",
+          "impact": "high",
+          "effort": "medium"
+        },
+        {
+          "action": "Tune relevance ranking",
+          "impact": "medium",
+          "effort": "medium"
+        }
+      ],
+      "benchmarks": [],
+      "level": 5,
+      "childrenIds": [
+        "search-zero-result-rate"
       ]
     },
     {
@@ -1597,7 +1754,7 @@ export const dataset: KpiDataset = {
         {
           "id": "conversion-rate",
           "relationship": "multiplicative",
-          "note": "First multiplicative stage of the conversion funnel."
+          "note": "First multiplicative stage of the funnel."
         }
       ],
       "levers": [
@@ -1605,165 +1762,133 @@ export const dataset: KpiDataset = {
           "action": "Improve navigation and merchandising",
           "impact": "high",
           "effort": "medium"
-        },
-        {
-          "action": "Strengthen on-site search",
-          "impact": "medium",
-          "effort": "medium"
         }
       ],
       "benchmarks": [],
       "level": 5,
       "childrenIds": [
-        "site-search-quality",
-        "page-load-time",
-        "product-recommendations"
+        "bounce-rate",
+        "recommendation-ctr",
+        "page-load-time"
       ]
     },
     {
-      "id": "loyalty-program",
-      "name": "Loyalty Program",
+      "id": "loyalty-enrollment-rate",
+      "name": "Loyalty Enrollment Rate",
       "section": "retention",
-      "definition": "Rewards, points or tiers that incentivize repeat purchase.",
-      "formula": "Qualitative: enrolled share and reward structure",
-      "unit": "score",
-      "parents": [
-        {
-          "id": "repeat-purchase-rate",
-          "relationship": "driver",
-          "note": "Rewards increase repeat rate."
-        }
-      ],
-      "levers": [
-        {
-          "action": "Reward second and third purchases",
-          "impact": "medium",
-          "effort": "high"
-        }
-      ],
-      "benchmarks": [],
-      "level": 5,
-      "childrenIds": []
-    },
-    {
-      "id": "post-purchase-experience",
-      "name": "Post-Purchase Experience",
-      "section": "retention",
-      "definition": "The quality of everything after checkout: tracking, packaging, onboarding and support. Builds loyalty and reduces returns.",
-      "formula": "Qualitative: tracking, unboxing, onboarding, support quality",
-      "unit": "score",
-      "parents": [
-        {
-          "id": "repeat-purchase-rate",
-          "relationship": "driver",
-          "note": "A smooth post-purchase experience builds loyalty."
-        },
-        {
-          "id": "return-rate",
-          "relationship": "inverse",
-          "note": "Good onboarding and care reduce returns."
-        }
-      ],
-      "levers": [
-        {
-          "action": "Add proactive order tracking",
-          "impact": "high",
-          "effort": "medium"
-        },
-        {
-          "action": "Provide product onboarding content",
-          "impact": "medium",
-          "effort": "low"
-        }
-      ],
-      "benchmarks": [],
-      "level": 5,
-      "childrenIds": []
-    },
-    {
-      "id": "cart-transparency",
-      "name": "Cart Transparency",
-      "section": "cart",
-      "definition": "How clearly the cart shows the full cost (incl. shipping and tax) before checkout. Hidden costs are the top abandonment cause.",
-      "formula": "Qualitative: total cost visible before checkout",
-      "unit": "score",
-      "parents": [
-        {
-          "id": "cart-to-checkout-rate",
-          "relationship": "driver",
-          "note": "Showing the full price in-cart prevents later drop-off."
-        }
-      ],
-      "levers": [
-        {
-          "action": "Show shipping and tax in the cart",
-          "impact": "high",
-          "effort": "low"
-        }
-      ],
-      "benchmarks": [],
-      "level": 6,
-      "childrenIds": []
-    },
-    {
-      "id": "product-recommendations",
-      "name": "Product Recommendations",
-      "section": "cart",
-      "definition": "Algorithmic suggestions that surface relevant products. Deepen browsing and drive cross-sell.",
-      "formula": "Qualitative: relevance and placement of recommendations",
-      "unit": "score",
-      "parents": [
-        {
-          "id": "cross-sell-attach-rate",
-          "relationship": "driver",
-          "note": "Recommendation engines surface relevant add-ons."
-        },
-        {
-          "id": "product-view-rate",
-          "relationship": "driver",
-          "note": "Recommendations deepen browsing."
-        }
-      ],
-      "levers": [
-        {
-          "action": "Deploy a recommendation engine",
-          "impact": "high",
-          "effort": "high"
-        },
-        {
-          "action": "Personalize by behavior",
-          "impact": "medium",
-          "effort": "high"
-        }
-      ],
-      "benchmarks": [],
-      "level": 6,
-      "childrenIds": []
-    },
-    {
-      "id": "checkout-abandonment-rate",
-      "name": "Checkout Abandonment Rate",
-      "section": "checkout",
-      "definition": "Share of started checkouts that are abandoned before completion. The inverse of completion, and a rich source of recoverable revenue.",
-      "formula": "1 - Checkout Completion Rate (Abandoned / Started x 100)",
+      "definition": "Share of customers enrolled in the loyalty program. Enrolled members buy more often.",
+      "formula": "Enrolled Customers / Total Customers x 100",
       "unit": "%",
       "parents": [
         {
-          "id": "checkout-completion-rate",
-          "relationship": "inverse",
-          "note": "Completion = 1 - abandonment."
+          "id": "repeat-purchase-rate",
+          "relationship": "driver",
+          "note": "Enrolled members repeat more."
         }
       ],
       "levers": [
         {
-          "action": "Remove surprise costs",
+          "action": "Reward the second and third purchase",
+          "impact": "medium",
+          "effort": "high"
+        }
+      ],
+      "benchmarks": [],
+      "level": 5,
+      "childrenIds": []
+    },
+    {
+      "id": "net-promoter-score",
+      "name": "Net Promoter Score (NPS)",
+      "section": "retention",
+      "definition": "Willingness of customers to recommend the shop. A leading indicator of retention and word-of-mouth.",
+      "formula": "% Promoters - % Detractors",
+      "unit": "nps",
+      "parents": [
+        {
+          "id": "repeat-purchase-rate",
+          "relationship": "driver",
+          "note": "Happier customers repeat and refer."
+        }
+      ],
+      "levers": [
+        {
+          "action": "Close the loop on detractor feedback",
+          "impact": "high",
+          "effort": "medium"
+        }
+      ],
+      "benchmarks": [],
+      "level": 5,
+      "childrenIds": []
+    },
+    {
+      "id": "bounce-rate",
+      "name": "Bounce Rate",
+      "section": "acquisition",
+      "definition": "Share of sessions that leave without interacting. Bounced sessions never reach a product, capping the funnel.",
+      "formula": "Single-page Sessions / Total Sessions x 100",
+      "unit": "%",
+      "parents": [
+        {
+          "id": "product-view-rate",
+          "relationship": "inverse",
+          "note": "Bounced sessions never view a product."
+        }
+      ],
+      "levers": [
+        {
+          "action": "Match landing pages to ad intent",
           "impact": "high",
           "effort": "medium"
         },
         {
-          "action": "Shorten the form and add wallets",
+          "action": "Speed up first paint",
           "impact": "high",
           "effort": "medium"
+        }
+      ],
+      "benchmarks": [
+        {
+          "label": "E-commerce range",
+          "value": "~30-55%",
+          "source": "https://www.convertcart.com/blog/ecommerce-bounce-rate"
+        },
+        {
+          "label": "Market average (Apr 2026)",
+          "value": "~46.7%",
+          "source": "https://www.irpcommerce.com/ecommercemarketdata.aspx"
+        }
+      ],
+      "level": 6,
+      "childrenIds": [
+        "page-load-time"
+      ]
+    },
+    {
+      "id": "cart-abandonment-rate",
+      "name": "Cart Abandonment Rate",
+      "section": "basket",
+      "definition": "Share of created carts abandoned before checkout starts. The classic e-commerce leakage point.",
+      "formula": "Abandoned Carts / Carts Created x 100",
+      "unit": "%",
+      "parents": [
+        {
+          "id": "cart-to-checkout-rate",
+          "relationship": "inverse",
+          "note": "Abandonment is the inverse of cart-to-checkout."
+        }
+      ],
+      "levers": [
+        {
+          "action": "Trigger cart-recovery emails",
+          "impact": "high",
+          "effort": "low"
+        },
+        {
+          "action": "Remove price surprises in the cart",
+          "impact": "medium",
+          "effort": "low"
         }
       ],
       "benchmarks": [
@@ -1774,131 +1899,35 @@ export const dataset: KpiDataset = {
         }
       ],
       "level": 6,
-      "childrenIds": [
-        "page-load-time",
-        "unexpected-extra-costs",
-        "checkout-form-length",
-        "payment-method-coverage",
-        "trust-security-signals",
-        "mobile-checkout-optimization",
-        "delivery-speed"
-      ]
-    },
-    {
-      "id": "price-clarity",
-      "name": "Price Clarity",
-      "section": "product",
-      "definition": "How early and completely the all-in price (incl. shipping and tax) is visible. Surprises later cause drop-off.",
-      "formula": "Qualitative: all-in price visible early, no late surprises",
-      "unit": "score",
-      "parents": [
-        {
-          "id": "add-to-cart-rate",
-          "relationship": "driver",
-          "note": "Clear pricing builds confidence to add to cart."
-        },
-        {
-          "id": "cart-to-checkout-rate",
-          "relationship": "driver",
-          "note": "No price surprises in the cart keeps shoppers moving."
-        }
-      ],
-      "levers": [
-        {
-          "action": "Show shipping and tax estimates early",
-          "impact": "high",
-          "effort": "low"
-        }
-      ],
-      "benchmarks": [],
-      "level": 6,
       "childrenIds": []
     },
     {
-      "id": "product-detail-page-quality",
-      "name": "Product Detail Page Quality",
-      "section": "product",
-      "definition": "How well a product page answers buying questions and builds confidence. A composite driver of add-to-cart.",
-      "formula": "Qualitative index of imagery, reviews, price clarity and stock signals",
-      "unit": "score",
+      "id": "recommendation-ctr",
+      "name": "Recommendation Click-Through Rate",
+      "section": "basket",
+      "definition": "Share of recommendation impressions that get clicked. Measures how relevant the recommendation engine is.",
+      "formula": "Recommendation Clicks / Recommendation Impressions x 100",
+      "unit": "%",
       "parents": [
         {
-          "id": "add-to-cart-rate",
+          "id": "cross-sell-attach-rate",
           "relationship": "driver",
-          "note": "Better PDPs lift add-to-cart."
-        }
-      ],
-      "levers": [
-        {
-          "action": "Add rich media and specs",
-          "impact": "high",
-          "effort": "medium"
+          "note": "Relevant recommendations drive cross-sell."
         },
-        {
-          "action": "Surface reviews above the fold",
-          "impact": "medium",
-          "effort": "low"
-        }
-      ],
-      "benchmarks": [],
-      "level": 6,
-      "childrenIds": [
-        "product-imagery",
-        "product-reviews-rating"
-      ]
-    },
-    {
-      "id": "site-search-quality",
-      "name": "On-Site Search Quality",
-      "section": "product",
-      "definition": "How well internal search returns relevant results. Searchers convert at much higher rates than browsers.",
-      "formula": "Qualitative: relevance, zero-result rate, synonym handling",
-      "unit": "score",
-      "parents": [
         {
           "id": "product-view-rate",
           "relationship": "driver",
-          "note": "Good search gets shoppers to products faster."
+          "note": "Recommendations deepen browsing."
         }
       ],
       "levers": [
         {
-          "action": "Add synonyms and typo tolerance",
+          "action": "Personalize recommendations by behavior",
           "impact": "high",
-          "effort": "medium"
-        },
-        {
-          "action": "Eliminate zero-result queries",
-          "impact": "medium",
-          "effort": "medium"
-        }
-      ],
-      "benchmarks": [],
-      "level": 6,
-      "childrenIds": []
-    },
-    {
-      "id": "stock-availability",
-      "name": "Stock Availability",
-      "section": "product",
-      "definition": "Share of catalogue that is in stock and buyable. Out-of-stock items cannot convert.",
-      "formula": "In-Stock SKUs / Total SKUs x 100",
-      "unit": "%",
-      "parents": [
-        {
-          "id": "add-to-cart-rate",
-          "relationship": "driver",
-          "note": "Out-of-stock items cannot be added to cart."
-        }
-      ],
-      "levers": [
-        {
-          "action": "Improve demand forecasting",
-          "impact": "medium",
           "effort": "high"
         },
         {
-          "action": "Offer back-in-stock alerts",
+          "action": "Test placement and number of slots",
           "impact": "medium",
           "effort": "low"
         }
@@ -1908,88 +1937,50 @@ export const dataset: KpiDataset = {
       "childrenIds": []
     },
     {
-      "id": "email-engagement",
-      "name": "Email / CRM Engagement",
-      "section": "retention",
-      "definition": "How actively customers open, click and convert on owned email and CRM flows. Brings customers back at near-zero marginal cost.",
-      "formula": "Open / Click / Conversion rates of CRM flows",
+      "id": "checkout-abandonment-rate",
+      "name": "Checkout Abandonment Rate",
+      "section": "checkout",
+      "definition": "Share of started checkouts abandoned before completion. The inverse of completion, and a rich source of recoverable revenue.",
+      "formula": "Abandoned Checkouts / Started Checkouts x 100",
       "unit": "%",
       "parents": [
         {
-          "id": "repeat-purchase-rate",
-          "relationship": "driver",
-          "note": "Owned-channel engagement brings customers back."
-        },
-        {
-          "id": "email-sessions",
-          "relationship": "driver",
-          "note": "Engagement drives email-sourced sessions."
+          "id": "checkout-completion-rate",
+          "relationship": "inverse",
+          "note": "Completion = 100% - abandonment."
         }
       ],
       "levers": [
         {
-          "action": "Segment and personalize flows",
+          "action": "Remove surprise costs and shorten the form",
           "impact": "high",
           "effort": "medium"
-        },
-        {
-          "action": "Win back lapsing customers",
-          "impact": "medium",
-          "effort": "low"
         }
       ],
       "benchmarks": [],
       "level": 6,
-      "childrenIds": []
+      "childrenIds": [
+        "extra-cost-abandonment-rate",
+        "account-creation-abandonment-rate",
+        "payment-security-abandonment-rate",
+        "slow-delivery-abandonment-rate",
+        "checkout-complexity-abandonment-rate",
+        "page-load-time",
+        "interaction-to-next-paint"
+      ]
     },
     {
-      "id": "checkout-form-length",
-      "name": "Checkout Form Length",
+      "id": "mobile-checkout-completion-rate",
+      "name": "Mobile Checkout Completion Rate",
       "section": "checkout",
-      "definition": "Number of fields a shopper must complete to check out. Each extra field adds friction.",
-      "formula": "Count of required checkout form fields",
-      "unit": "count",
+      "definition": "Checkout completion rate on mobile, where most traffic is and conversion typically lags desktop.",
+      "formula": "Mobile Completed Checkouts / Mobile Started Checkouts x 100",
+      "unit": "%",
       "parents": [
         {
-          "id": "checkout-abandonment-rate",
+          "id": "checkout-completion-rate",
           "relationship": "driver",
-          "note": "Longer forms raise abandonment."
-        }
-      ],
-      "levers": [
-        {
-          "action": "Remove optional fields",
-          "impact": "high",
-          "effort": "low"
-        },
-        {
-          "action": "Use address autocomplete",
-          "impact": "medium",
-          "effort": "low"
-        }
-      ],
-      "benchmarks": [
-        {
-          "label": "Checkout length (Baymard)",
-          "value": "Reducing form fields measurably lifts completion",
-          "source": "https://baymard.com/lists/cart-abandonment-rate"
-        }
-      ],
-      "level": 7,
-      "childrenIds": []
-    },
-    {
-      "id": "mobile-checkout-optimization",
-      "name": "Mobile Checkout Optimization",
-      "section": "checkout",
-      "definition": "How well checkout works on mobile, where most traffic is and conversion lags desktop.",
-      "formula": "Qualitative: autofill, wallets, responsive layout, tap targets",
-      "unit": "score",
-      "parents": [
-        {
-          "id": "checkout-abandonment-rate",
-          "relationship": "driver",
-          "note": "Mobile converts worse; optimizing it recovers orders."
+          "note": "Mobile is a large component of overall completion."
         }
       ],
       "levers": [
@@ -2005,86 +1996,357 @@ export const dataset: KpiDataset = {
         }
       ],
       "benchmarks": [],
-      "level": 7,
+      "level": 6,
       "childrenIds": []
     },
     {
-      "id": "payment-method-coverage",
-      "name": "Payment Method Coverage",
-      "section": "checkout",
-      "definition": "How well the offered payment methods match local shopper preferences. A missing preferred method causes drop-off.",
-      "formula": "Count of locally relevant payment methods offered",
-      "unit": "count",
+      "id": "cumulative-layout-shift",
+      "name": "Cumulative Layout Shift (CLS)",
+      "section": "performance",
+      "definition": "Visual stability of the page, a Core Web Vital. Shifting layouts cause mis-taps and erode trust.",
+      "formula": "Cumulative Layout Shift score (0 to 1)",
+      "unit": "ratio",
       "parents": [
         {
-          "id": "checkout-abandonment-rate",
-          "relationship": "driver",
-          "note": "Missing a preferred payment method causes abandonment."
+          "id": "add-to-cart-rate",
+          "relationship": "inverse",
+          "note": "Layout shift causes mis-taps and lost intent."
         }
       ],
       "levers": [
         {
-          "action": "Add wallets (Apple/Google Pay)",
+          "action": "Reserve space for images and ads",
           "impact": "high",
           "effort": "low"
         },
         {
-          "action": "Add local methods (e.g. iDEAL, SEPA, BNPL)",
+          "action": "Avoid late-injected content",
           "impact": "medium",
           "effort": "medium"
         }
       ],
       "benchmarks": [],
-      "level": 7,
+      "level": 6,
       "childrenIds": []
     },
     {
-      "id": "trust-security-signals",
-      "name": "Trust & Security Signals",
-      "section": "checkout",
-      "definition": "Visible cues that the shop and payment are safe (SSL, recognizable marks, guarantees, reviews). Distrust drives a quarter of abandonment.",
-      "formula": "Qualitative: SSL, trust badges, guarantees, recognizable payment marks",
-      "unit": "score",
+      "id": "uptime",
+      "name": "Uptime / Availability",
+      "section": "performance",
+      "definition": "Share of time the shop is available and able to take orders. Downtime is lost orders, full stop.",
+      "formula": "Available Time / Total Time x 100",
+      "unit": "%",
       "parents": [
         {
-          "id": "checkout-abandonment-rate",
+          "id": "checkout-completion-rate",
           "relationship": "driver",
-          "note": "Payment-security doubts cause ~25% of abandonment."
-        },
-        {
-          "id": "add-to-cart-rate",
-          "relationship": "driver",
-          "note": "Trust cues raise willingness to add to cart."
+          "note": "Downtime during a session prevents completion."
         }
       ],
       "levers": [
         {
-          "action": "Show recognizable trust and payment marks",
+          "action": "Add redundancy and autoscaling",
+          "impact": "high",
+          "effort": "high"
+        },
+        {
+          "action": "Load-test for peak events",
           "impact": "medium",
+          "effort": "medium"
+        }
+      ],
+      "benchmarks": [],
+      "level": 6,
+      "childrenIds": []
+    },
+    {
+      "id": "average-product-rating",
+      "name": "Average Product Rating",
+      "section": "product",
+      "definition": "Mean star rating across reviewed products. Social proof that lifts conversion and calibrates expectations.",
+      "formula": "Sum of Star Ratings / Number of Ratings",
+      "unit": "rating",
+      "parents": [
+        {
+          "id": "add-to-cart-rate",
+          "relationship": "driver",
+          "note": "Higher ratings build confidence to add to cart."
+        },
+        {
+          "id": "return-rate",
+          "relationship": "inverse",
+          "note": "Honest, high ratings calibrate expectations and reduce returns."
+        }
+      ],
+      "levers": [
+        {
+          "action": "Fix low-rated products at the root",
+          "impact": "high",
+          "effort": "medium"
+        }
+      ],
+      "benchmarks": [],
+      "level": 6,
+      "childrenIds": []
+    },
+    {
+      "id": "images-per-product",
+      "name": "Images per Product",
+      "section": "product",
+      "definition": "Average number of images (and rich media) per product page. More angles set expectations and lift intent.",
+      "formula": "Total Product Images / Number of Products",
+      "unit": "count",
+      "parents": [
+        {
+          "id": "add-to-cart-rate",
+          "relationship": "driver",
+          "note": "Richer imagery lifts add-to-cart."
+        },
+        {
+          "id": "return-rate",
+          "relationship": "inverse",
+          "note": "Accurate, rich imagery sets expectations and reduces returns."
+        }
+      ],
+      "levers": [
+        {
+          "action": "Add zoom, video and 360 views",
+          "impact": "high",
+          "effort": "medium"
+        },
+        {
+          "action": "Standardize a minimum image set per SKU",
+          "impact": "medium",
+          "effort": "low"
+        }
+      ],
+      "benchmarks": [],
+      "level": 6,
+      "childrenIds": []
+    },
+    {
+      "id": "out-of-stock-rate",
+      "name": "Out-of-Stock Rate",
+      "section": "product",
+      "definition": "Share of catalogue that is unavailable to buy. Out-of-stock items cannot convert.",
+      "formula": "Out-of-Stock SKUs / Total SKUs x 100",
+      "unit": "%",
+      "parents": [
+        {
+          "id": "add-to-cart-rate",
+          "relationship": "inverse",
+          "note": "Out-of-stock items cannot be added to cart."
+        }
+      ],
+      "levers": [
+        {
+          "action": "Improve demand forecasting",
+          "impact": "high",
+          "effort": "high"
+        },
+        {
+          "action": "Offer back-in-stock alerts",
+          "impact": "medium",
+          "effort": "low"
+        }
+      ],
+      "benchmarks": [],
+      "level": 6,
+      "childrenIds": []
+    },
+    {
+      "id": "pdp-bounce-rate",
+      "name": "Product Page Bounce Rate",
+      "section": "product",
+      "definition": "Share of product-page sessions that exit without any further action. Signals weak pages or mismatched traffic.",
+      "formula": "PDP Sessions Exiting Without Action / PDP Sessions x 100",
+      "unit": "%",
+      "parents": [
+        {
+          "id": "add-to-cart-rate",
+          "relationship": "inverse",
+          "note": "High PDP bounce suppresses add-to-cart."
+        }
+      ],
+      "levers": [
+        {
+          "action": "Strengthen above-the-fold content and proof",
+          "impact": "medium",
+          "effort": "medium"
+        }
+      ],
+      "benchmarks": [],
+      "level": 6,
+      "childrenIds": []
+    },
+    {
+      "id": "review-coverage-rate",
+      "name": "Review Coverage Rate",
+      "section": "product",
+      "definition": "Share of products that have at least one review. Coverage drives the social proof shoppers look for.",
+      "formula": "Products with >=1 Review / Total Products x 100",
+      "unit": "%",
+      "parents": [
+        {
+          "id": "add-to-cart-rate",
+          "relationship": "driver",
+          "note": "More reviewed products means more social proof at the point of decision."
+        }
+      ],
+      "levers": [
+        {
+          "action": "Automate post-purchase review requests",
+          "impact": "high",
           "effort": "low"
         },
         {
-          "action": "Add a clear returns guarantee",
+          "action": "Incentivize first reviews on new SKUs",
           "impact": "medium",
+          "effort": "low"
+        }
+      ],
+      "benchmarks": [],
+      "level": 6,
+      "childrenIds": []
+    },
+    {
+      "id": "search-zero-result-rate",
+      "name": "Search Zero-Result Rate",
+      "section": "product",
+      "definition": "Share of internal searches that return no results. Each zero-result is a dead end for a high-intent shopper.",
+      "formula": "Zero-Result Searches / Total Searches x 100",
+      "unit": "%",
+      "parents": [
+        {
+          "id": "internal-search-conversion-rate",
+          "relationship": "inverse",
+          "note": "Zero results kill search conversion."
+        }
+      ],
+      "levers": [
+        {
+          "action": "Add synonyms and spell-correction",
+          "impact": "high",
+          "effort": "low"
+        },
+        {
+          "action": "Surface alternatives on no-result pages",
+          "impact": "medium",
+          "effort": "low"
+        }
+      ],
+      "benchmarks": [],
+      "level": 6,
+      "childrenIds": []
+    },
+    {
+      "id": "email-click-through-rate",
+      "name": "Email Click-Through Rate",
+      "section": "retention",
+      "definition": "Share of delivered emails that get clicked. Drives owned-channel sessions and repeat purchases at near-zero marginal cost.",
+      "formula": "Email Clicks / Emails Delivered x 100",
+      "unit": "%",
+      "parents": [
+        {
+          "id": "email-sessions",
+          "relationship": "driver",
+          "note": "Clicks generate email-sourced sessions."
+        },
+        {
+          "id": "repeat-purchase-rate",
+          "relationship": "driver",
+          "note": "Engaged subscribers come back to buy."
+        }
+      ],
+      "levers": [
+        {
+          "action": "Segment and personalize flows",
+          "impact": "high",
+          "effort": "medium"
+        },
+        {
+          "action": "Test subject lines and timing",
+          "impact": "medium",
+          "effort": "low"
+        }
+      ],
+      "benchmarks": [],
+      "level": 6,
+      "childrenIds": []
+    },
+    {
+      "id": "account-creation-abandonment-rate",
+      "name": "Forced-Account Abandonment Rate",
+      "section": "checkout",
+      "definition": "Share of checkout abandonments caused by being forced to create an account.",
+      "formula": "Abandonments Citing Forced Account / Abandonments x 100",
+      "unit": "%",
+      "parents": [
+        {
+          "id": "checkout-abandonment-rate",
+          "relationship": "driver",
+          "note": "Forced account creation drives ~26% of abandonment."
+        }
+      ],
+      "levers": [
+        {
+          "action": "Offer guest checkout",
+          "impact": "high",
           "effort": "low"
         }
       ],
       "benchmarks": [
         {
-          "label": "Security-related abandonment (Baymard)",
-          "value": "~25% abandon over payment-security distrust",
+          "label": "Abandonment reason (Baymard)",
+          "value": "~26% abandon over forced account creation",
           "source": "https://baymard.com/lists/cart-abandonment-rate"
         }
       ],
       "level": 7,
-      "childrenIds": []
+      "childrenIds": [
+        "guest-checkout-usage-rate"
+      ]
     },
     {
-      "id": "unexpected-extra-costs",
-      "name": "Unexpected Extra Costs",
+      "id": "checkout-complexity-abandonment-rate",
+      "name": "Checkout-Complexity Abandonment Rate",
       "section": "checkout",
-      "definition": "Surprise shipping, tax or fees revealed late in checkout. The single biggest abandonment driver.",
-      "formula": "Share of abandoners citing extra costs",
+      "definition": "Share of checkout abandonments caused by a long or complicated checkout.",
+      "formula": "Abandonments Citing Complex Checkout / Abandonments x 100",
+      "unit": "%",
+      "parents": [
+        {
+          "id": "checkout-abandonment-rate",
+          "relationship": "driver",
+          "note": "A long/complex checkout drives ~22% of abandonment."
+        }
+      ],
+      "levers": [
+        {
+          "action": "Cut steps and fields; add autofill",
+          "impact": "high",
+          "effort": "medium"
+        }
+      ],
+      "benchmarks": [
+        {
+          "label": "Abandonment reason (Baymard)",
+          "value": "~22% abandon over a too-long/complex checkout",
+          "source": "https://baymard.com/lists/cart-abandonment-rate"
+        }
+      ],
+      "level": 7,
+      "childrenIds": [
+        "checkout-form-fields",
+        "average-checkout-duration"
+      ]
+    },
+    {
+      "id": "extra-cost-abandonment-rate",
+      "name": "Extra-Cost Abandonment Rate",
+      "section": "checkout",
+      "definition": "Share of checkout abandonments caused by surprise shipping, tax or fees. The single biggest abandonment reason.",
+      "formula": "Abandonments Citing Extra Costs / Abandonments x 100",
       "unit": "%",
       "parents": [
         {
@@ -2098,11 +2360,6 @@ export const dataset: KpiDataset = {
           "action": "Show all-in pricing upfront",
           "impact": "high",
           "effort": "low"
-        },
-        {
-          "action": "Offer free-shipping thresholds",
-          "impact": "medium",
-          "effort": "low"
         }
       ],
       "benchmarks": [
@@ -2113,54 +2370,118 @@ export const dataset: KpiDataset = {
         }
       ],
       "level": 7,
-      "childrenIds": []
+      "childrenIds": [
+        "checkout-shipping-fee"
+      ]
     },
     {
-      "id": "delivery-speed",
-      "name": "Delivery Speed",
-      "section": "fulfillment",
-      "definition": "Time from order to doorstep. Slow promised delivery drives abandonment; fast, reliable delivery drives loyalty.",
-      "formula": "Median Order-to-Doorstep time (days)",
-      "unit": "days",
+      "id": "payment-security-abandonment-rate",
+      "name": "Security-Distrust Abandonment Rate",
+      "section": "checkout",
+      "definition": "Share of checkout abandonments caused by distrust of payment security.",
+      "formula": "Abandonments Citing Security Concerns / Abandonments x 100",
+      "unit": "%",
       "parents": [
         {
           "id": "checkout-abandonment-rate",
           "relationship": "driver",
-          "note": "Slow promised delivery drives ~23% of abandonment."
-        },
-        {
-          "id": "repeat-purchase-rate",
-          "relationship": "driver",
-          "note": "Fast, reliable delivery drives repeat purchases."
+          "note": "Payment-security distrust drives ~25% of abandonment."
         }
       ],
       "levers": [
         {
-          "action": "Distribute inventory closer to demand",
-          "impact": "high",
-          "effort": "high"
-        },
+          "action": "Show recognizable trust and payment marks",
+          "impact": "medium",
+          "effort": "low"
+        }
+      ],
+      "benchmarks": [
         {
-          "action": "Offer clear, faster delivery options",
+          "label": "Abandonment reason (Baymard)",
+          "value": "~25% abandon over security concerns",
+          "source": "https://baymard.com/lists/cart-abandonment-rate"
+        }
+      ],
+      "level": 7,
+      "childrenIds": [
+        "payment-methods-offered"
+      ]
+    },
+    {
+      "id": "slow-delivery-abandonment-rate",
+      "name": "Slow-Delivery Abandonment Rate",
+      "section": "checkout",
+      "definition": "Share of checkout abandonments caused by delivery being too slow.",
+      "formula": "Abandonments Citing Slow Delivery / Abandonments x 100",
+      "unit": "%",
+      "parents": [
+        {
+          "id": "checkout-abandonment-rate",
+          "relationship": "driver",
+          "note": "Slow delivery drives ~23% of abandonment."
+        }
+      ],
+      "levers": [
+        {
+          "action": "Offer and surface faster delivery options",
           "impact": "medium",
           "effort": "medium"
         }
       ],
       "benchmarks": [
         {
-          "label": "Slow-delivery abandonment (Baymard)",
+          "label": "Abandonment reason (Baymard)",
           "value": "~23% abandon when delivery is too slow",
           "source": "https://baymard.com/lists/cart-abandonment-rate"
         }
       ],
       "level": 7,
-      "childrenIds": []
+      "childrenIds": [
+        "average-delivery-time"
+      ]
+    },
+    {
+      "id": "interaction-to-next-paint",
+      "name": "Interaction to Next Paint (INP)",
+      "section": "performance",
+      "definition": "Responsiveness of the page to user input, a Core Web Vital. Laggy interactions frustrate and suppress action.",
+      "formula": "75th-percentile Interaction to Next Paint (milliseconds)",
+      "unit": "ms",
+      "parents": [
+        {
+          "id": "add-to-cart-rate",
+          "relationship": "inverse",
+          "note": "Laggy interactions suppress add-to-cart."
+        },
+        {
+          "id": "checkout-abandonment-rate",
+          "relationship": "driver",
+          "note": "Unresponsive checkout raises abandonment."
+        }
+      ],
+      "levers": [
+        {
+          "action": "Break up long JavaScript tasks",
+          "impact": "high",
+          "effort": "medium"
+        },
+        {
+          "action": "Defer non-critical scripts",
+          "impact": "medium",
+          "effort": "medium"
+        }
+      ],
+      "benchmarks": [],
+      "level": 7,
+      "childrenIds": [
+        "javascript-bundle-size"
+      ]
     },
     {
       "id": "page-load-time",
-      "name": "Page Load Time / Site Speed",
-      "section": "product",
-      "definition": "How fast pages render and become interactive. Speed influences every funnel stage from bounce to checkout.",
+      "name": "Page Load Time (LCP)",
+      "section": "performance",
+      "definition": "How fast the main content renders, measured as Largest Contentful Paint. Speed influences every funnel stage.",
       "formula": "Median Largest Contentful Paint (seconds)",
       "unit": "seconds",
       "parents": [
@@ -2208,86 +2529,197 @@ export const dataset: KpiDataset = {
       "level": 7,
       "childrenIds": [
         "server-response-time",
-        "image-optimization"
+        "javascript-bundle-size",
+        "image-weight-per-page"
       ]
     },
     {
-      "id": "product-imagery",
-      "name": "Product Imagery",
-      "section": "product",
-      "definition": "Quality and richness of product visuals (zoom, video, 360, lifestyle). Drives both intent and accurate expectations.",
-      "formula": "Qualitative: image count, zoom, video, 360 coverage",
-      "unit": "score",
+      "id": "average-checkout-duration",
+      "name": "Average Checkout Duration",
+      "section": "checkout",
+      "definition": "Median time to complete checkout once started. Longer checkouts correlate with more drop-off.",
+      "formula": "Median seconds from checkout start to completion",
+      "unit": "seconds",
       "parents": [
         {
-          "id": "product-detail-page-quality",
+          "id": "checkout-complexity-abandonment-rate",
           "relationship": "driver",
-          "note": "Imagery is a core PDP quality factor."
-        },
-        {
-          "id": "return-rate",
-          "relationship": "inverse",
-          "note": "Accurate, rich imagery sets expectations and reduces returns."
+          "note": "Longer checkouts raise complexity-driven abandonment."
         }
       ],
       "levers": [
         {
-          "action": "Add zoom, video and 360 views",
+          "action": "Enable wallets and one-click",
           "impact": "high",
           "effort": "medium"
         },
         {
-          "action": "Show true-to-life color and scale",
+          "action": "Prefill known data",
           "impact": "medium",
-          "effort": "medium"
+          "effort": "low"
         }
       ],
       "benchmarks": [],
-      "level": 7,
+      "level": 8,
       "childrenIds": []
     },
     {
-      "id": "product-reviews-rating",
-      "name": "Reviews & Ratings",
-      "section": "product",
-      "definition": "Volume and average rating of customer reviews. Social proof that lifts conversion and calibrates expectations.",
-      "formula": "Average Star Rating weighted by Review Volume",
-      "unit": "score",
+      "id": "checkout-form-fields",
+      "name": "Checkout Form Fields",
+      "section": "checkout",
+      "definition": "Number of fields a shopper must complete to check out. Each extra field adds friction.",
+      "formula": "Count of required checkout form fields",
+      "unit": "count",
       "parents": [
         {
-          "id": "product-detail-page-quality",
+          "id": "checkout-complexity-abandonment-rate",
           "relationship": "driver",
-          "note": "Reviews are a core PDP quality factor."
-        },
-        {
-          "id": "return-rate",
-          "relationship": "inverse",
-          "note": "Reviews calibrate expectations, lowering returns."
+          "note": "More fields raise complexity-driven abandonment."
         }
       ],
       "levers": [
         {
-          "action": "Automate post-purchase review requests",
+          "action": "Remove optional fields",
           "impact": "high",
           "effort": "low"
         },
         {
-          "action": "Surface photo and fit reviews",
+          "action": "Use address autocomplete",
+          "impact": "medium",
+          "effort": "low"
+        }
+      ],
+      "benchmarks": [],
+      "level": 8,
+      "childrenIds": []
+    },
+    {
+      "id": "checkout-shipping-fee",
+      "name": "Average Checkout Shipping Fee",
+      "section": "checkout",
+      "definition": "Average shipping fee shown at checkout. The visible cost most associated with extra-cost abandonment.",
+      "formula": "Total Shipping Charged / Orders",
+      "unit": "currency",
+      "parents": [
+        {
+          "id": "extra-cost-abandonment-rate",
+          "relationship": "driver",
+          "note": "Higher visible shipping fees raise extra-cost abandonment."
+        }
+      ],
+      "levers": [
+        {
+          "action": "Introduce free-shipping thresholds",
+          "impact": "high",
+          "effort": "low"
+        },
+        {
+          "action": "Show shipping early, not as a surprise",
+          "impact": "medium",
+          "effort": "low"
+        }
+      ],
+      "benchmarks": [],
+      "level": 8,
+      "childrenIds": []
+    },
+    {
+      "id": "guest-checkout-usage-rate",
+      "name": "Guest-Checkout Usage Rate",
+      "section": "checkout",
+      "definition": "Share of checkouts completed as a guest. High usage means account creation is not a forced barrier.",
+      "formula": "Guest Checkouts / Total Checkouts x 100",
+      "unit": "%",
+      "parents": [
+        {
+          "id": "account-creation-abandonment-rate",
+          "relationship": "inverse",
+          "note": "Available guest checkout removes the forced-account barrier."
+        }
+      ],
+      "levers": [
+        {
+          "action": "Make guest checkout the default path",
+          "impact": "high",
+          "effort": "low"
+        }
+      ],
+      "benchmarks": [],
+      "level": 8,
+      "childrenIds": []
+    },
+    {
+      "id": "payment-methods-offered",
+      "name": "Payment Methods Offered",
+      "section": "checkout",
+      "definition": "Count of locally relevant payment methods available at checkout. Missing a preferred method causes drop-off.",
+      "formula": "Number of distinct payment methods offered",
+      "unit": "count",
+      "parents": [
+        {
+          "id": "payment-security-abandonment-rate",
+          "relationship": "inverse",
+          "note": "Recognized methods and wallets reduce security-driven abandonment."
+        }
+      ],
+      "levers": [
+        {
+          "action": "Add wallets (Apple/Google Pay)",
+          "impact": "high",
+          "effort": "low"
+        },
+        {
+          "action": "Add local methods (iDEAL, SEPA, BNPL)",
           "impact": "medium",
           "effort": "medium"
         }
       ],
       "benchmarks": [],
-      "level": 7,
+      "level": 8,
       "childrenIds": []
     },
     {
-      "id": "image-optimization",
-      "name": "Image Optimization",
-      "section": "product",
-      "definition": "How well product and page images are compressed and delivered. Images are usually the largest part of page weight.",
-      "formula": "Qualitative: next-gen formats, compression, lazy-load, correct sizing",
-      "unit": "score",
+      "id": "average-delivery-time",
+      "name": "Average Delivery Time",
+      "section": "fulfillment",
+      "definition": "Median time from order to doorstep. Slow promised delivery drives abandonment; fast delivery drives loyalty.",
+      "formula": "Median Order-to-Doorstep time (days)",
+      "unit": "days",
+      "parents": [
+        {
+          "id": "slow-delivery-abandonment-rate",
+          "relationship": "driver",
+          "note": "Slower delivery raises slow-delivery abandonment."
+        },
+        {
+          "id": "repeat-purchase-rate",
+          "relationship": "driver",
+          "note": "Fast, reliable delivery drives repeat purchases."
+        }
+      ],
+      "levers": [
+        {
+          "action": "Distribute inventory closer to demand",
+          "impact": "high",
+          "effort": "high"
+        },
+        {
+          "action": "Offer clear, faster delivery options",
+          "impact": "medium",
+          "effort": "medium"
+        }
+      ],
+      "benchmarks": [],
+      "level": 8,
+      "childrenIds": []
+    },
+    {
+      "id": "image-weight-per-page",
+      "name": "Image Weight per Page",
+      "section": "performance",
+      "definition": "Total image bytes transferred per page. Images are usually the largest part of page weight.",
+      "formula": "Transferred Image Bytes / Page (kilobytes)",
+      "unit": "KB",
       "parents": [
         {
           "id": "page-load-time",
@@ -2297,7 +2729,7 @@ export const dataset: KpiDataset = {
       ],
       "levers": [
         {
-          "action": "Serve WebP/AVIF and lazy-load",
+          "action": "Compress and lazy-load images",
           "impact": "high",
           "effort": "low"
         },
@@ -2309,15 +2741,52 @@ export const dataset: KpiDataset = {
       ],
       "benchmarks": [],
       "level": 8,
+      "childrenIds": [
+        "image-format-adoption"
+      ]
+    },
+    {
+      "id": "javascript-bundle-size",
+      "name": "JavaScript Bundle Size",
+      "section": "performance",
+      "definition": "Bytes of JavaScript shipped to the browser. Heavy bundles slow rendering and hurt responsiveness.",
+      "formula": "Transferred JavaScript per page (kilobytes)",
+      "unit": "KB",
+      "parents": [
+        {
+          "id": "page-load-time",
+          "relationship": "driver",
+          "note": "Large bundles delay rendering."
+        },
+        {
+          "id": "interaction-to-next-paint",
+          "relationship": "driver",
+          "note": "Heavy JS blocks the main thread, hurting INP."
+        }
+      ],
+      "levers": [
+        {
+          "action": "Code-split and tree-shake",
+          "impact": "high",
+          "effort": "medium"
+        },
+        {
+          "action": "Remove unused dependencies",
+          "impact": "medium",
+          "effort": "medium"
+        }
+      ],
+      "benchmarks": [],
+      "level": 8,
       "childrenIds": []
     },
     {
       "id": "server-response-time",
       "name": "Server Response Time (TTFB)",
-      "section": "product",
+      "section": "performance",
       "definition": "Time for the server to return the first byte. A major, often-overlooked component of total load time.",
       "formula": "Time to First Byte (milliseconds)",
-      "unit": "milliseconds",
+      "unit": "ms",
       "parents": [
         {
           "id": "page-load-time",
@@ -2332,19 +2801,171 @@ export const dataset: KpiDataset = {
           "effort": "medium"
         },
         {
-          "action": "Optimize backend queries",
+          "action": "Optimize backend processing",
           "impact": "medium",
           "effort": "high"
         }
       ],
       "benchmarks": [],
       "level": 8,
+      "childrenIds": [
+        "cdn-cache-hit-rate",
+        "backend-processing-time"
+      ]
+    },
+    {
+      "id": "backend-processing-time",
+      "name": "Backend Processing Time",
+      "section": "performance",
+      "definition": "Time the application server spends computing a response before sending it. A direct input to TTFB.",
+      "formula": "Median server compute time per request (milliseconds)",
+      "unit": "ms",
+      "parents": [
+        {
+          "id": "server-response-time",
+          "relationship": "driver",
+          "note": "Compute time is a core part of TTFB."
+        }
+      ],
+      "levers": [
+        {
+          "action": "Add application-level caching",
+          "impact": "high",
+          "effort": "medium"
+        },
+        {
+          "action": "Profile and optimize hot paths",
+          "impact": "medium",
+          "effort": "high"
+        }
+      ],
+      "benchmarks": [],
+      "level": 9,
+      "childrenIds": [
+        "database-query-time"
+      ]
+    },
+    {
+      "id": "cdn-cache-hit-rate",
+      "name": "CDN Cache Hit Rate",
+      "section": "performance",
+      "definition": "Share of requests served from the CDN edge cache rather than origin. Higher hit rates cut response time.",
+      "formula": "Edge Cache Hits / Total Requests x 100",
+      "unit": "%",
+      "parents": [
+        {
+          "id": "server-response-time",
+          "relationship": "inverse",
+          "note": "More cache hits mean lower TTFB."
+        }
+      ],
+      "levers": [
+        {
+          "action": "Tune cache headers and TTLs",
+          "impact": "high",
+          "effort": "medium"
+        },
+        {
+          "action": "Cache HTML at the edge where safe",
+          "impact": "medium",
+          "effort": "medium"
+        }
+      ],
+      "benchmarks": [],
+      "level": 9,
+      "childrenIds": []
+    },
+    {
+      "id": "image-format-adoption",
+      "name": "Next-Gen Image Format Adoption",
+      "section": "performance",
+      "definition": "Share of images served in efficient next-gen formats (WebP/AVIF). Higher adoption shrinks image weight.",
+      "formula": "Next-Gen-Format Images / Total Images x 100",
+      "unit": "%",
+      "parents": [
+        {
+          "id": "image-weight-per-page",
+          "relationship": "inverse",
+          "note": "More next-gen formats cut image weight."
+        }
+      ],
+      "levers": [
+        {
+          "action": "Serve WebP/AVIF with fallbacks",
+          "impact": "high",
+          "effort": "low"
+        }
+      ],
+      "benchmarks": [],
+      "level": 9,
+      "childrenIds": []
+    },
+    {
+      "id": "database-query-time",
+      "name": "Database Query Time",
+      "section": "performance",
+      "definition": "Time spent in database queries per request. Often the dominant share of backend processing time.",
+      "formula": "Average database time per request (milliseconds)",
+      "unit": "ms",
+      "parents": [
+        {
+          "id": "backend-processing-time",
+          "relationship": "driver",
+          "note": "Query time dominates backend processing."
+        }
+      ],
+      "levers": [
+        {
+          "action": "Add indexes and fix N+1 queries",
+          "impact": "high",
+          "effort": "medium"
+        },
+        {
+          "action": "Cache hot read paths",
+          "impact": "medium",
+          "effort": "medium"
+        }
+      ],
+      "benchmarks": [],
+      "level": 10,
+      "childrenIds": [
+        "slow-query-rate"
+      ]
+    },
+    {
+      "id": "slow-query-rate",
+      "name": "Slow Query Rate",
+      "section": "performance",
+      "definition": "Share of database queries exceeding the slow-query threshold. The most-actionable leaf lever behind query time.",
+      "formula": "Queries Over Threshold / Total Queries x 100",
+      "unit": "%",
+      "parents": [
+        {
+          "id": "database-query-time",
+          "relationship": "driver",
+          "note": "Slow queries pull up average query time."
+        }
+      ],
+      "levers": [
+        {
+          "action": "Index the worst offenders",
+          "impact": "high",
+          "effort": "low"
+        },
+        {
+          "action": "Rewrite or denormalize hot queries",
+          "impact": "medium",
+          "effort": "high"
+        }
+      ],
+      "benchmarks": [],
+      "level": 11,
       "childrenIds": []
     }
   ],
   "meta": {
-    "nodeCount": 64,
-    "maxLevel": 8,
+    "nodeCount": 87,
+    "maxLevel": 11,
     "rootIds": [
       "net-profit"
     ],

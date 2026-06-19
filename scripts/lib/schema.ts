@@ -15,12 +15,32 @@ export const RELATIONSHIPS = [
 
 export const MAGNITUDES = ['low', 'medium', 'high'] as const;
 
+/**
+ * Allowed units. Deliberately restricted to concrete, measurable units so that
+ * every KPI is unambiguously measurable (no "score" / "qualitative" nodes).
+ * Qualitative levers belong in the `levers` array, not as a KPI.
+ */
+export const UNITS = [
+  '%',
+  'currency',
+  'count',
+  'ratio',
+  'seconds',
+  'ms',
+  'days',
+  'months',
+  'KB',
+  'rating',
+  'nps',
+] as const;
+
 export const SECTION_IDS = [
   'business',
   'acquisition',
   'product',
-  'cart',
+  'basket',
   'checkout',
+  'performance',
   'fulfillment',
   'retention',
   'cost',
@@ -61,7 +81,7 @@ export const KpiSourceSchema = z
     section: z.enum(SECTION_IDS),
     definition: z.string().min(1),
     formula: z.string().min(1),
-    unit: z.string().min(1),
+    unit: z.enum(UNITS),
     parents: z.array(ParentLinkSchema),
     levers: z.array(LeverSchema),
     benchmarks: z.array(BenchmarkSchema),

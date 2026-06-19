@@ -18,8 +18,9 @@
             "business",
             "acquisition",
             "product",
-            "cart",
+            "basket",
             "checkout",
+            "performance",
             "fulfillment",
             "retention",
             "cost"
@@ -35,7 +36,19 @@
         },
         "unit": {
           "type": "string",
-          "minLength": 1
+          "enum": [
+            "%",
+            "currency",
+            "count",
+            "ratio",
+            "seconds",
+            "ms",
+            "days",
+            "months",
+            "KB",
+            "rating",
+            "nps"
+          ]
         },
         "parents": {
           "type": "array",
