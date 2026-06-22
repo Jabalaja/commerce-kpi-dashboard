@@ -96,3 +96,39 @@ function edgesWithin(nodeSet: Set<string>): Set<string> {
   }
   return result;
 }
+
+export const rootId = meta.rootIds[0];
+
+/**
+ * Progressive disclosure: the set of nodes visible given which nodes are
+ * `expanded`. Starts at the root and descends only through expanded nodes, so a
+ * node is shown once any visible+expanded parent reveals it.
+ */
+export function computeVisible(expanded: Set<string>): Set<string> {
+  const visible = new Set<string>(meta.rootIds);
+  const queue = [...meta.rootIds];
+  while (queue.length) {
+    const cur = queue.shift()!;
+    if (!expanded.has(cur)) continue;
+    for (const childId of nodeById.get(cur)?.childrenIds ?? []) {
+      if (!visible.has(childId)) {
+        visible.add(childId);
+        queue.push(childId);
+      }
+    }
+  }
+  return visible;
+}
+
+/** Every node that has children (i.e. everything that can be expanded). */
+export const allExpandableIds = nodes.filter((n) => n.childrenIds.length > 0).map((n) => n.id);
+
+/**
+ * The ancestors that must be expanded for `id` to become visible (its full
+ * upward cone, excluding `id` itself). Used to auto-reveal a jump/path target.
+ */
+export function ancestorsToExpand(id: string): Set<string> {
+  const ancestors = pathToTop(id).nodes;
+  ancestors.delete(id);
+  return ancestors;
+}

@@ -9,10 +9,16 @@ interface ToolbarProps {
   maxHops: number;
   sections: Section[];
   allNodes: KpiNode[];
+  visibleCount: number;
+  totalCount: number;
+  fullyExpanded: boolean;
+  collapsedToTop: boolean;
   onReset: () => void;
   onHopsChange: (hops: number) => void;
   onTogglePath: () => void;
   onSelectKpi: (id: string) => void;
+  onExpandAll: () => void;
+  onCollapseToTop: () => void;
 }
 
 export function Toolbar({
@@ -22,15 +28,25 @@ export function Toolbar({
   maxHops,
   sections,
   allNodes,
+  visibleCount,
+  totalCount,
+  fullyExpanded,
+  collapsedToTop,
   onReset,
   onHopsChange,
   onTogglePath,
   onSelectKpi,
+  onExpandAll,
+  onCollapseToTop,
 }: ToolbarProps) {
   return (
     <div className="panel toolbar">
       <div className="mode-line">
-        {mode === 'overview' && <>Full map · {allNodes.length} KPIs · click any node to focus</>}
+        {mode === 'overview' && (
+          <>
+            Showing <b>{visibleCount}</b> of {totalCount} KPIs · click <b>+N</b> to reveal drivers
+          </>
+        )}
         {mode === 'focus' && (
           <>
             Focus: <b>{focusKpi?.name}</b> · {hops}-hop neighbourhood
@@ -63,10 +79,19 @@ export function Toolbar({
         ))}
       </select>
 
+      <div className="row">
+        <button className="btn" onClick={onExpandAll} disabled={fullyExpanded}>
+          Expand all
+        </button>
+        <button className="btn" onClick={onCollapseToTop} disabled={collapsedToTop}>
+          Collapse to top
+        </button>
+      </div>
+
       {mode !== 'overview' && (
         <div className="row">
           <button className="btn" onClick={onReset}>
-            ← Full map
+            ← Back to map
           </button>
           <button
             className={`btn ${mode === 'path' ? 'active' : ''}`}

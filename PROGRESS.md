@@ -18,6 +18,18 @@ Authoritative spec: `GOAL.md`. This file tracks phase status. Commit at the end 
 All phases complete. Live URL: **https://jabalaja.github.io/commerce-kpi-dashboard/**
 Extend the data via `data/kpis.json` + push to `main` → CI redeploys automatically.
 
+## Post-launch — UX rework (progressive disclosure)
+
+Feedback: the full 87-node map read as cluttered. Reworked the UI to **progressive
+disclosure** (Chris's choice; tool is presentation-first): default shows **Net
+Profit + its 5 pillars**, each node has a **`+N` chip** to reveal/collapse its
+drivers, "Expand all" / "Collapse to top" for the whole map. Apex is a brand-
+gradient **hero** with the equation; nodes sized by level; quiet edges; collapsible
+legend; minimap only in full-map view. Jump/Path auto-expand their target's
+ancestors. Verified with Playwright (default 6 nodes, expand/collapse, expand-all
+→ 87, jump + path-to-top, 0 console errors, holds at 768px). Note: "money earned vs
+money saved" is research guidance only, **not** a visual split — single unified tree.
+
 ## Key decisions (log as made)
 
 - Source-of-truth format: **JSON** under `data/` (decision in Phase 2).

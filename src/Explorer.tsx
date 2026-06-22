@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
   Background,
   Controls,
@@ -16,12 +16,16 @@ import { Toolbar, type Mode } from './components/Toolbar';
 import { Legend } from './components/Legend';
 import { DetailPanel } from './components/DetailPanel';
 import {
+  allExpandableIds,
+  ancestorsToExpand,
+  computeVisible,
   dataset,
   edges as kpiEdges,
   neighborhood,
   nodeById,
   nodes as kpiNodes,
   pathToTop,
+  rootId,
   sectionColor,
   sections,
 } from './lib/graph';
@@ -31,44 +35,115 @@ import { brand } from './theme/brand';
 const nodeTypes = { kpi: KpiNodeView };
 const MAX_HOPS = 4;
 const EDGE_DIM = '#d9dee5';
-const EDGE_OVERVIEW = '#cdd5de';
+const EDGE_REST = '#c4ccd6';
+
+interface PendingFit {
+  ids: string[];
+  padding: number;
+}
 
 export function Explorer() {
   const rf = useReactFlow();
+  const [expanded, setExpanded] = useState<Set<string>>(() => new Set([rootId]));
   const [positions, setPositions] = useState<Map<string, XY> | null>(null);
   const [mode, setMode] = useState<Mode>('overview');
   const [focusId, setFocusId] = useState<string | null>(null);
   const [open, setOpen] = useState(false);
   const [hops, setHops] = useState(1);
 
-  // Lay the graph out once with ELK.
+  const layoutSeq = useRef(0);
+  const pendingFit = useRef<PendingFit | null>(null);
+
+  const prefersReduced = useMemo(
+    () =>
+      typeof window !== 'undefined' &&
+      window.matchMedia('(prefers-reduced-motion: reduce)').matches,
+    [],
+  );
+  const fitDuration = prefersReduced ? 0 : 520;
+
+  const visibleIds = useMemo(() => computeVisible(expanded), [expanded]);
+  const visibleRef = useRef(visibleIds);
+  visibleRef.current = visibleIds;
+
+  // (Re)lay out the visible subset whenever it changes. Only the latest run wins.
   useEffect(() => {
-    let alive = true;
-    computeLayout(dataset).then((pos) => {
-      if (alive) setPositions(pos);
+    const seq = ++layoutSeq.current;
+    computeLayout(dataset, visibleIds).then((pos) => {
+      if (seq === layoutSeq.current) setPositions(pos);
     });
-    return () => {
-      alive = false;
-    };
-  }, []);
+  }, [visibleIds]);
+
+  // After a relayout renders, apply the pending camera move (or fit to all visible).
+  useEffect(() => {
+    if (!positions) return;
+    const pf = pendingFit.current;
+    pendingFit.current = null;
+    const raf = requestAnimationFrame(() =>
+      requestAnimationFrame(() => {
+        const ids = pf ? pf.ids : [...visibleRef.current];
+        rf.fitView({
+          nodes: ids.map((id) => ({ id })),
+          padding: pf?.padding ?? 0.18,
+          duration: fitDuration,
+        });
+      }),
+    );
+    return () => cancelAnimationFrame(raf);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [positions]);
 
   const focusKpi = focusId ? nodeById.get(focusId) ?? null : null;
+  const fullyExpanded = visibleIds.size === kpiNodes.length;
+  const collapsedToTop = expanded.size === 1 && expanded.has(rootId);
 
   // ── camera helpers ──────────────────────────────────────────────
-  const fitToNodes = useCallback(
-    (ids: Iterable<string>) => {
-      rf.fitView({ nodes: [...ids].map((id) => ({ id })), padding: 0.28, duration: 600 });
+  const fitNeighborhood = useCallback(
+    (id: string, h: number) => {
+      const ids = [...neighborhood(id, h).nodes].filter((x) => visibleRef.current.has(x));
+      rf.fitView({ nodes: ids.map((i) => ({ id: i })), padding: 0.28, duration: fitDuration });
     },
-    [rf],
+    [rf, fitDuration],
   );
-  const fitAll = useCallback(() => rf.fitView({ padding: 0.12, duration: 600 }), [rf]);
+  const fitVisible = useCallback(() => {
+    rf.fitView({
+      nodes: [...visibleRef.current].map((id) => ({ id })),
+      padding: 0.18,
+      duration: fitDuration,
+    });
+  }, [rf, fitDuration]);
 
-  // ── actions ─────────────────────────────────────────────────────
+  // ── expand / collapse ───────────────────────────────────────────
+  const toggleExpand = useCallback((id: string) => {
+    setExpanded((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      pendingFit.current = { ids: [...computeVisible(next)], padding: 0.18 };
+      return next;
+    });
+  }, []);
+
+  const expandAll = useCallback(() => {
+    const next = new Set(allExpandableIds);
+    pendingFit.current = { ids: [...computeVisible(next)], padding: 0.1 };
+    setExpanded(next);
+  }, []);
+
+  const collapseToTop = useCallback(() => {
+    const next = new Set([rootId]);
+    pendingFit.current = { ids: [...computeVisible(next)], padding: 0.22 };
+    setMode('overview');
+    setOpen(false);
+    setExpanded(next);
+  }, []);
+
+  // ── focus / path ────────────────────────────────────────────────
   const reset = useCallback(() => {
     setMode('overview');
     setOpen(false);
-    fitAll();
-  }, [fitAll]);
+    fitVisible();
+  }, [fitVisible]);
 
   const focusOn = useCallback(
     (id: string) => {
@@ -76,32 +151,49 @@ export function Explorer() {
       setFocusId(id);
       setHops(1);
       setOpen(true);
-      fitToNodes(neighborhood(id, 1).nodes);
+      if (visibleRef.current.has(id)) {
+        fitNeighborhood(id, 1);
+      } else {
+        // Reveal the target by expanding all of its ancestors, then frame the chain.
+        pendingFit.current = { ids: [...pathToTop(id).nodes], padding: 0.26 };
+        setExpanded((prev) => new Set([...prev, ...ancestorsToExpand(id)]));
+      }
     },
-    [fitToNodes],
+    [fitNeighborhood],
   );
 
   const changeHops = useCallback(
     (next: number) => {
       const h = Math.max(1, Math.min(MAX_HOPS, next));
       setHops(h);
-      if (focusId) fitToNodes(neighborhood(focusId, h).nodes);
+      if (focusId) fitNeighborhood(focusId, h);
     },
-    [focusId, fitToNodes],
+    [focusId, fitNeighborhood],
   );
 
   const togglePath = useCallback(() => {
     if (!focusId) return;
     if (mode === 'path') {
       setMode('focus');
-      fitToNodes(neighborhood(focusId, hops).nodes);
-    } else {
-      setMode('path');
-      fitToNodes(pathToTop(focusId).nodes);
+      fitNeighborhood(focusId, hops);
+      return;
     }
-  }, [focusId, mode, hops, fitToNodes]);
+    const path = pathToTop(focusId);
+    setMode('path');
+    const allVisible = [...path.nodes].every((n) => visibleRef.current.has(n));
+    if (allVisible) {
+      rf.fitView({
+        nodes: [...path.nodes].map((id) => ({ id })),
+        padding: 0.26,
+        duration: fitDuration,
+      });
+    } else {
+      pendingFit.current = { ids: [...path.nodes], padding: 0.26 };
+      setExpanded((prev) => new Set([...prev, ...ancestorsToExpand(focusId)]));
+    }
+  }, [focusId, mode, hops, rf, fitDuration, fitNeighborhood]);
 
-  // Escape returns to the full map.
+  // Escape returns to the map.
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       if (e.key === 'Escape') reset();
@@ -110,88 +202,82 @@ export function Explorer() {
     return () => window.removeEventListener('keydown', onKey);
   }, [reset]);
 
-  // ── base elements ───────────────────────────────────────────────
-  const baseNodes = useMemo<Node[]>(() => {
-    if (!positions) return [];
-    return kpiNodes.map((kpi) => ({
-      id: kpi.id,
-      type: 'kpi',
-      position: positions.get(kpi.id) ?? { x: 0, y: 0 },
-      draggable: false,
-      data: { kpi, color: sectionColor(kpi.section), state: 'normal' } as KpiNodeData,
-    }));
-  }, [positions]);
-
-  const baseEdges = useMemo<Edge[]>(
-    () =>
-      kpiEdges.map((e) => ({
-        id: e.id,
-        source: e.childId,
-        target: e.parentId,
-        data: { relationship: e.relationship },
-        markerEnd: { type: MarkerType.ArrowClosed, width: 15, height: 15 },
-      })),
-    [],
-  );
-
-  // ── highlight + styled display elements ─────────────────────────
+  // ── highlight (focus/path dimming) ──────────────────────────────
   const highlight = useMemo(() => {
     if (mode === 'overview' || !focusId) return null;
     return mode === 'path' ? pathToTop(focusId) : neighborhood(focusId, hops);
   }, [mode, focusId, hops]);
 
-  const displayNodes = useMemo<Node[]>(
-    () =>
-      baseNodes.map((n) => {
+  // ── display nodes / edges (only the visible subset) ─────────────
+  const displayNodes = useMemo<Node[]>(() => {
+    if (!positions) return [];
+    return kpiNodes
+      .filter((kpi) => visibleIds.has(kpi.id))
+      .map((kpi) => {
         let state: NodeState = 'normal';
         if (highlight) {
-          if (n.id === focusId) state = 'focused';
-          else if (highlight.nodes.has(n.id)) state = 'active';
+          if (kpi.id === focusId) state = 'focused';
+          else if (highlight.nodes.has(kpi.id)) state = 'active';
           else state = 'dim';
         }
-        return {
-          ...n,
-          data: { ...(n.data as KpiNodeData), state },
-          zIndex: state === 'focused' ? 20 : state === 'active' ? 10 : 0,
+        const data: KpiNodeData = {
+          kpi,
+          color: sectionColor(kpi.section),
+          state,
+          expandable: kpi.childrenIds.length > 0,
+          isExpanded: expanded.has(kpi.id),
+          childCount: kpi.childrenIds.length,
+          onToggleExpand: toggleExpand,
         };
-      }),
-    [baseNodes, highlight, focusId],
-  );
+        return {
+          id: kpi.id,
+          type: 'kpi',
+          position: positions.get(kpi.id) ?? { x: 0, y: 0 },
+          draggable: false,
+          data,
+          zIndex: state === 'focused' ? 20 : state === 'active' ? 10 : 1,
+        };
+      });
+  }, [positions, visibleIds, highlight, focusId, expanded, toggleExpand]);
 
-  const displayEdges = useMemo<Edge[]>(
-    () =>
-      baseEdges.map((e) => {
-        const rel = (e.data as { relationship: string }).relationship;
-        const relColor = brand.relationship[rel];
+  const displayEdges = useMemo<Edge[]>(() => {
+    return kpiEdges
+      .filter((e) => visibleIds.has(e.childId) && visibleIds.has(e.parentId))
+      .map((e) => {
+        const relColor = brand.relationship[e.relationship];
+        const base: Edge = {
+          id: e.id,
+          source: e.childId,
+          target: e.parentId,
+          data: { relationship: e.relationship },
+        };
         if (!highlight) {
           return {
-            ...e,
-            style: { stroke: EDGE_OVERVIEW, strokeWidth: 1.2, opacity: 0.85 },
-            markerEnd: { type: MarkerType.ArrowClosed, width: 12, height: 12, color: EDGE_OVERVIEW },
+            ...base,
+            style: { stroke: EDGE_REST, strokeWidth: 1.4, opacity: 0.7 },
+            markerEnd: { type: MarkerType.ArrowClosed, width: 13, height: 13, color: EDGE_REST },
           };
         }
         if (highlight.edges.has(e.id)) {
           return {
-            ...e,
+            ...base,
             animated: mode === 'path',
-            style: { stroke: relColor, strokeWidth: 2.4, opacity: 1 },
+            style: { stroke: relColor, strokeWidth: 2.6, opacity: 1 },
             markerEnd: { type: MarkerType.ArrowClosed, width: 16, height: 16, color: relColor },
             zIndex: 5,
           };
         }
         return {
-          ...e,
-          style: { stroke: EDGE_DIM, strokeWidth: 1, opacity: 0.1 },
+          ...base,
+          style: { stroke: EDGE_DIM, strokeWidth: 1, opacity: 0.12 },
           markerEnd: { type: MarkerType.ArrowClosed, width: 10, height: 10, color: EDGE_DIM },
         };
-      }),
-    [baseEdges, highlight, mode],
-  );
+      });
+  }, [visibleIds, highlight, mode]);
 
-  // Render the canvas only once ELK positions are ready, so React Flow's
-  // `fitView` fits the real, measured nodes on mount (centered, correctly scaled).
+  // Render the canvas only once the first ELK layout is ready.
   if (!positions) {
-    return <div className="loading">Laying out {kpiNodes.length} KPIs…</div>;
+    return <div className="loading">Building the Net Profit tree…</div>;
   }
 
   return (
@@ -202,24 +288,25 @@ export function Explorer() {
         nodeTypes={nodeTypes}
         onNodeClick={(_, node) => focusOn(node.id)}
         onPaneClick={reset}
-        minZoom={0.1}
-        maxZoom={2.2}
-        proOptions={{ hideAttribution: false }}
+        minZoom={0.08}
+        maxZoom={2.4}
         nodesDraggable={false}
         nodesConnectable={false}
         elementsSelectable
         fitView
-        fitViewOptions={{ padding: 0.14 }}
+        fitViewOptions={{ padding: 0.18 }}
       >
-        <Background gap={28} color="#e3e8ee" />
+        <Background gap={30} color="#e3e8ee" />
         <Controls showInteractive={false} />
-        <MiniMap
-          pannable
-          zoomable
-          nodeColor={(n) => sectionColor((n.data as KpiNodeData).kpi.section)}
-          nodeStrokeWidth={2}
-          maskColor="rgba(11,20,55,0.06)"
-        />
+        {fullyExpanded && (
+          <MiniMap
+            pannable
+            zoomable
+            nodeColor={(n) => sectionColor((n.data as KpiNodeData).kpi.section)}
+            nodeStrokeWidth={2}
+            maskColor="rgba(11,20,55,0.06)"
+          />
+        )}
       </ReactFlow>
 
       <Toolbar
@@ -229,10 +316,16 @@ export function Explorer() {
         maxHops={MAX_HOPS}
         sections={sections}
         allNodes={kpiNodes}
+        visibleCount={visibleIds.size}
+        totalCount={kpiNodes.length}
+        fullyExpanded={fullyExpanded}
+        collapsedToTop={collapsedToTop}
         onReset={reset}
         onHopsChange={changeHops}
         onTogglePath={togglePath}
         onSelectKpi={focusOn}
+        onExpandAll={expandAll}
+        onCollapseToTop={collapseToTop}
       />
       <Legend sections={sections} />
       <DetailPanel

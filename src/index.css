@@ -114,8 +114,8 @@ body {
 
 .kpi-node {
   position: relative;
-  width: 220px;
-  height: 72px;
+  width: 234px;
+  height: 84px;
   display: flex;
   align-items: stretch;
   background: var(--card);
@@ -124,8 +124,33 @@ body {
   box-shadow: var(--shadow-sm);
   overflow: hidden;
   cursor: pointer;
+  animation: kpi-in 0.32s ease both;
   transition: box-shadow 0.15s ease, transform 0.15s ease, opacity 0.2s ease,
     filter 0.2s ease;
+}
+
+/* size variants — must match nodeSize() in src/lib/layout.ts */
+.kpi-node.v-apex {
+  width: 300px;
+  height: 108px;
+  border: none;
+  background: var(--gradient-brand);
+  box-shadow: var(--shadow-lg);
+}
+.kpi-node.v-pillar {
+  width: 256px;
+  height: 92px;
+}
+
+@keyframes kpi-in {
+  from {
+    opacity: 0;
+    transform: translateY(-7px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
 }
 
 .kpi-node:hover {
@@ -142,21 +167,38 @@ body {
 .kpi-body {
   flex: 1;
   min-width: 0;
-  padding: 8px 10px 8px 11px;
+  padding: 9px 46px 9px 12px;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
+  justify-content: center;
+  gap: 5px;
 }
 
 .kpi-name {
   font-weight: 600;
-  font-size: 0.82rem;
-  line-height: 1.18;
+  font-size: 0.92rem;
+  line-height: 1.2;
   color: var(--ink);
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
+}
+
+.v-apex .kpi-name {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #fff;
+}
+.v-pillar .kpi-name {
+  font-size: 1rem;
+}
+
+.kpi-equation {
+  font-size: 0.78rem;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.82);
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
 }
 
 .kpi-meta {
@@ -178,6 +220,57 @@ body {
 
 .kpi-level {
   color: var(--ink-faint);
+}
+
+.v-apex .kpi-accent {
+  display: none;
+}
+.v-apex .kpi-chip {
+  background: rgba(255, 255, 255, 0.2);
+  color: #fff;
+}
+.v-apex .kpi-level {
+  color: rgba(255, 255, 255, 0.7);
+}
+
+/* expand / collapse chip */
+.kpi-expand {
+  position: absolute;
+  right: 8px;
+  bottom: 8px;
+  min-width: 30px;
+  height: 22px;
+  padding: 0 9px;
+  border-radius: var(--radius-pill);
+  border: 1px solid var(--accent);
+  background: color-mix(in srgb, var(--accent) 13%, white);
+  color: color-mix(in srgb, var(--accent) 72%, black);
+  font: inherit;
+  font-size: 0.72rem;
+  font-weight: 700;
+  line-height: 1;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.12s ease, transform 0.12s ease;
+}
+.kpi-expand:hover {
+  background: color-mix(in srgb, var(--accent) 24%, white);
+  transform: translateY(-1px);
+}
+.kpi-expand.is-open {
+  background: var(--accent);
+  color: #fff;
+}
+.v-apex .kpi-expand {
+  border-color: rgba(255, 255, 255, 0.6);
+  background: rgba(255, 255, 255, 0.18);
+  color: #fff;
+}
+.v-apex .kpi-expand.is-open {
+  background: rgba(255, 255, 255, 0.92);
+  color: var(--brand-blue);
 }
 
 .kpi-handle {
@@ -326,9 +419,31 @@ body {
   bottom: 14px;
   left: 14px;
   z-index: 6;
-  padding: 10px 12px;
-  max-width: 230px;
+  max-width: 240px;
   font-size: 0.72rem;
+  overflow: hidden;
+}
+
+.legend-toggle {
+  appearance: none;
+  border: none;
+  background: transparent;
+  font: inherit;
+  font-size: 0.74rem;
+  font-weight: 700;
+  color: var(--ink);
+  padding: 9px 13px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  width: 100%;
+}
+.legend-toggle .chev {
+  color: var(--ink-faint);
+}
+.legend-content {
+  padding: 0 13px 12px;
 }
 
 .legend h4 {
@@ -618,4 +733,27 @@ body {
 .react-flow__controls-button {
   border-radius: 6px;
   border-color: var(--border);
+}
+
+/* Visible keyboard focus on every interactive control */
+.btn:focus-visible,
+.header-btn:focus-visible,
+.kpi-select:focus-visible,
+.stepper button:focus-visible,
+.legend-toggle:focus-visible,
+.kpi-expand:focus-visible,
+.detail-close:focus-visible,
+.relate-chip:focus-visible,
+.benchmark a:focus-visible {
+  outline: none;
+  box-shadow: var(--shadow-focus);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .kpi-node {
+    animation: none;
+  }
+  .detail {
+    transition: none;
+  }
 }

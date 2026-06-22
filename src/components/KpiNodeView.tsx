@@ -9,14 +9,30 @@ export interface KpiNodeData {
   kpi: KpiNode;
   color: string;
   state: NodeState;
+  /** Whether this KPI has drivers that can be revealed. */
+  expandable: boolean;
+  /** Whether its drivers are currently revealed. */
+  isExpanded: boolean;
+  /** Number of direct drivers (shown on the collapsed chip). */
+  childCount: number;
+  onToggleExpand: (id: string) => void;
   [key: string]: unknown;
 }
 
+function variantOf(level: number): 'apex' | 'pillar' | 'normal' {
+  if (level === 1) return 'apex';
+  if (level === 2) return 'pillar';
+  return 'normal';
+}
+
 function KpiNodeViewImpl({ data }: NodeProps) {
-  const { kpi, color, state } = data as KpiNodeData;
+  const { kpi, color, state, expandable, isExpanded, childCount, onToggleExpand } =
+    data as KpiNodeData;
+  const variant = variantOf(kpi.level);
+
   return (
     <div
-      className={`kpi-node state-${state}`}
+      className={`kpi-node v-${variant} state-${state}`}
       style={{ ['--accent' as string]: color }}
       title={kpi.name}
     >
@@ -26,11 +42,31 @@ function KpiNodeViewImpl({ data }: NodeProps) {
       <div className="kpi-accent" />
       <div className="kpi-body">
         <div className="kpi-name">{kpi.name}</div>
+        {variant === 'apex' && <div className="kpi-equation">= Revenue − Total Cost</div>}
         <div className="kpi-meta">
           <span className="kpi-chip">{unitLabel(kpi.unit)}</span>
           <span className="kpi-level">L{kpi.level}</span>
         </div>
       </div>
+
+      {expandable && (
+        <button
+          type="button"
+          className={`kpi-expand ${isExpanded ? 'is-open' : ''}`}
+          onClick={(e) => {
+            e.stopPropagation();
+            onToggleExpand(kpi.id);
+          }}
+          aria-label={
+            isExpanded
+              ? `Collapse the drivers of ${kpi.name}`
+              : `Reveal ${childCount} driver${childCount === 1 ? '' : 's'} of ${kpi.name}`
+          }
+          title={isExpanded ? 'Collapse drivers' : `Reveal ${childCount} drivers`}
+        >
+          {isExpanded ? '–' : `+${childCount}`}
+        </button>
+      )}
     </div>
   );
 }

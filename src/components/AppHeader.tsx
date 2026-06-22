@@ -16,7 +16,7 @@ export function AppHeader({ onToggleFullscreen, isFullscreen }: AppHeaderProps) 
       />
       <div className="titles">
         <span className="title">Webshop KPI Explorer</span>
-        <span className="subtitle">From operational levers to money earned &amp; money saved</span>
+        <span className="subtitle">From a single operational lever up to Net Profit</span>
       </div>
       <div className="spacer" />
       <button className="header-btn" onClick={onToggleFullscreen}>

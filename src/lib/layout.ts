@@ -1,11 +1,7 @@
 import ELK, { type ElkNode } from 'elkjs/lib/elk.bundled.js';
-import type { KpiDataset } from '../kpi-types';
+import type { KpiDataset, KpiNode } from '../kpi-types';
 
 const elk = new ELK();
-
-/** Fixed node box, shared with the custom node component and ELK. */
-export const NODE_W = 220;
-export const NODE_H = 72;
 
 export interface XY {
   x: number;
@@ -13,30 +9,43 @@ export interface XY {
 }
 
 /**
- * Lays the KPI DAG out top-down with ELK's layered algorithm.
- * Edges are fed parent -> child so roots (Net Profit) sit in the top layer and
- * leaf levers at the bottom. Children are ordered by (level, section, name) and
- * `considerModelOrder` biases same-section nodes to sit together, so each
- * section reads as a contiguous band.
+ * Per-level node box. The apex (Net Profit) is the hero; L2 pillars are larger
+ * than the rest. These MUST match the `.kpi-node` size variants in index.css so
+ * edges attach correctly.
  */
-export async function computeLayout(dataset: KpiDataset): Promise<Map<string, XY>> {
-  const sectionOrder = new Map(dataset.sections.map((s) => [s.id, s.order]));
+export function nodeSize(node: KpiNode): { width: number; height: number } {
+  if (node.level === 1) return { width: 300, height: 108 }; // apex hero
+  if (node.level === 2) return { width: 256, height: 92 }; // pillars
+  return { width: 234, height: 84 }; // everything else
+}
 
-  const ordered = dataset.nodes.slice().sort(
+/**
+ * Lays out the *visible* subset of the KPI DAG top-down with ELK's layered
+ * algorithm. Edges are fed parent -> child so the root (Net Profit) sits at the
+ * top. With progressive disclosure only a handful of nodes are visible at once,
+ * so layouts are small, fast, and airy.
+ */
+export async function computeLayout(
+  dataset: KpiDataset,
+  visibleIds?: Set<string>,
+): Promise<Map<string, XY>> {
+  const sectionOrder = new Map(dataset.sections.map((s) => [s.id, s.order]));
+  const visible = visibleIds ?? new Set(dataset.nodes.map((n) => n.id));
+  const visibleNodes = dataset.nodes.filter((n) => visible.has(n.id));
+
+  const ordered = visibleNodes.slice().sort(
     (a, b) =>
       a.level - b.level ||
       (sectionOrder.get(a.section)! - sectionOrder.get(b.section)!) ||
       a.name.localeCompare(b.name),
   );
 
-  const children = ordered.map((n) => ({ id: n.id, width: NODE_W, height: NODE_H }));
+  const children = ordered.map((n) => ({ id: n.id, ...nodeSize(n) }));
 
   const edges = dataset.nodes.flatMap((n) =>
-    n.parents.map((p) => ({
-      id: `${n.id}->${p.id}`,
-      sources: [p.id], // parent first => parent placed above
-      targets: [n.id],
-    })),
+    n.parents
+      .filter((p) => visible.has(n.id) && visible.has(p.id))
+      .map((p) => ({ id: `${n.id}->${p.id}`, sources: [p.id], targets: [n.id] })),
   );
 
   const graph: ElkNode = {
@@ -44,8 +53,8 @@ export async function computeLayout(dataset: KpiDataset): Promise<Map<string, XY
     layoutOptions: {
       'elk.algorithm': 'layered',
       'elk.direction': 'DOWN',
-      'elk.layered.spacing.nodeNodeBetweenLayers': '95',
-      'elk.spacing.nodeNode': '26',
+      'elk.layered.spacing.nodeNodeBetweenLayers': '92',
+      'elk.spacing.nodeNode': '38',
       'elk.layered.considerModelOrder.strategy': 'NODES_AND_EDGES',
       'elk.layered.nodePlacement.strategy': 'BRANDES_KOEPF',
       'elk.layered.crossingMinimization.strategy': 'LAYER_SWEEP',
