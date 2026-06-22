@@ -8,6 +8,42 @@ export interface XY {
   y: number;
 }
 
+export interface Rect {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+}
+
+/**
+ * Bounding box (in flow coordinates) of the given node ids: each node's laid-out
+ * top-left position plus its rendered size. Returns null if no id resolves to a
+ * position. Used to frame a transition's end-state with `fitBounds` while the
+ * nodes glide into it. `sizeOf` lets the caller resolve id -> KpiNode -> nodeSize
+ * without this module depending on the graph layer.
+ */
+export function boundsOf(
+  positions: Map<string, XY>,
+  ids: Iterable<string>,
+  sizeOf: (id: string) => { width: number; height: number },
+): Rect | null {
+  let minX = Infinity;
+  let minY = Infinity;
+  let maxX = -Infinity;
+  let maxY = -Infinity;
+  for (const id of ids) {
+    const p = positions.get(id);
+    if (!p) continue;
+    const { width, height } = sizeOf(id);
+    if (p.x < minX) minX = p.x;
+    if (p.y < minY) minY = p.y;
+    if (p.x + width > maxX) maxX = p.x + width;
+    if (p.y + height > maxY) maxY = p.y + height;
+  }
+  if (minX === Infinity) return null;
+  return { x: minX, y: minY, width: maxX - minX, height: maxY - minY };
+}
+
 /**
  * Per-level node box. The apex (Net Profit) is the hero; L2 pillars are larger
  * than the rest. These MUST match the `.kpi-node` size variants in index.css so

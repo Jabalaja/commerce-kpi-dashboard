@@ -124,7 +124,10 @@ body {
   box-shadow: var(--shadow-sm);
   overflow: hidden;
   cursor: pointer;
-  animation: kpi-in 0.32s ease;
+  /* Fade + slight scale only — the position tween in Explorer.tsx does the moving,
+     and revealed nodes grow out of their parent. No fill-mode: once the enter
+     ends the node must fall back to its plain properties so .is-exiting can win. */
+  animation: kpi-in 0.34s ease;
   transition: box-shadow 0.15s ease, transform 0.15s ease, opacity 0.2s ease,
     filter 0.2s ease;
 }
@@ -145,12 +148,20 @@ body {
 @keyframes kpi-in {
   from {
     opacity: 0;
-    transform: translateY(-7px) scale(0.98);
+    transform: scale(0.94);
   }
   to {
     opacity: 1;
     transform: none;
   }
+}
+
+/* Departing node: soft fade/scale-out before it unmounts (collapse / focus change). */
+.kpi-node.is-exiting {
+  opacity: 0;
+  transform: scale(0.96);
+  pointer-events: none;
+  transition: opacity 0.22s ease, transform 0.22s ease;
 }
 
 .kpi-node:hover {
@@ -747,6 +758,9 @@ body {
 @media (prefers-reduced-motion: reduce) {
   .kpi-node {
     animation: none;
+  }
+  .kpi-node.is-exiting {
+    transition: none;
   }
   .detail {
     transition: none;

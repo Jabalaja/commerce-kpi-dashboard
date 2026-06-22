@@ -18,6 +18,8 @@ export interface KpiNodeData {
   onToggleExpand: (id: string) => void;
   /** Whether to show the expand/collapse chip (map mode only). */
   chip: boolean;
+  /** Node is leaving the active set: fade/scale-out before it unmounts. */
+  exit?: boolean;
   [key: string]: unknown;
 }
 
@@ -28,13 +30,13 @@ function variantOf(level: number): 'apex' | 'pillar' | 'normal' {
 }
 
 function KpiNodeViewImpl({ data }: NodeProps) {
-  const { kpi, color, state, expandable, isExpanded, childCount, onToggleExpand, chip } =
+  const { kpi, color, state, expandable, isExpanded, childCount, onToggleExpand, chip, exit } =
     data as KpiNodeData;
   const variant = variantOf(kpi.level);
 
   return (
     <div
-      className={`kpi-node v-${variant} state-${state}`}
+      className={`kpi-node v-${variant} state-${state}${exit ? ' is-exiting' : ''}`}
       style={{ ['--accent' as string]: color }}
       title={kpi.name}
     >
