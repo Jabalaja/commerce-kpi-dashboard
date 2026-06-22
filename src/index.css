@@ -124,7 +124,7 @@ body {
   box-shadow: var(--shadow-sm);
   overflow: hidden;
   cursor: pointer;
-  animation: kpi-in 0.32s ease both;
+  animation: kpi-in 0.32s ease;
   transition: box-shadow 0.15s ease, transform 0.15s ease, opacity 0.2s ease,
     filter 0.2s ease;
 }
@@ -286,11 +286,6 @@ body {
 
 .kpi-node.state-active {
   box-shadow: 0 0 0 2px color-mix(in srgb, var(--accent) 55%, white), var(--shadow-md);
-}
-
-.kpi-node.state-dim {
-  opacity: 0.18;
-  filter: saturate(0.4);
 }
 
 /* ───────────────────────── Overlays: toolbar, legend ───────────────────────── */

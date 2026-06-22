@@ -16,6 +16,8 @@ export interface KpiNodeData {
   /** Number of direct drivers (shown on the collapsed chip). */
   childCount: number;
   onToggleExpand: (id: string) => void;
+  /** Whether to show the expand/collapse chip (map mode only). */
+  chip: boolean;
   [key: string]: unknown;
 }
 
@@ -26,7 +28,7 @@ function variantOf(level: number): 'apex' | 'pillar' | 'normal' {
 }
 
 function KpiNodeViewImpl({ data }: NodeProps) {
-  const { kpi, color, state, expandable, isExpanded, childCount, onToggleExpand } =
+  const { kpi, color, state, expandable, isExpanded, childCount, onToggleExpand, chip } =
     data as KpiNodeData;
   const variant = variantOf(kpi.level);
 
@@ -49,7 +51,7 @@ function KpiNodeViewImpl({ data }: NodeProps) {
         </div>
       </div>
 
-      {expandable && (
+      {chip && expandable && (
         <button
           type="button"
           className={`kpi-expand ${isExpanded ? 'is-open' : ''}`}

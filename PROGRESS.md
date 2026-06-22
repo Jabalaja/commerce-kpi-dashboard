@@ -30,6 +30,19 @@ ancestors. Verified with Playwright (default 6 nodes, expand/collapse, expand-al
 → 87, jump + path-to-top, 0 console errors, holds at 768px). Note: "money earned vs
 money saved" is research guidance only, **not** a visual split — single unified tree.
 
+### Iteration 2 — focus isolates (instead of dimming)
+
+Feedback: after expanding several branches, focusing a node still looked cluttered.
+Root causes: focus only **dimmed** the rest (and the dim was broken — the fade-in
+keyframe's `both` fill pinned opacity to 1), so the whole expanded sprawl stayed on
+screen. Fix: the rendered/laid-out set is now decided by mode — **overview** =
+`computeVisible(expanded)`, **focus** = `neighborhood(focusId, hops)`, **path** =
+`pathToTop(focusId)`. Focus/path **hide** everything else (no dimming), so focusing
+"Contribution Margin per Order" now shows exactly its 3-node neighbourhood. Chips
+only in map mode; "Back to map" restores the expanded tree. Fixed the keyframe so
+opacity is never pinned. Verified with Playwright (15-node map → focus = 3 nodes,
+hops widen, path-to-top, back-to-map restores 15, expand-all 87, 0 console errors).
+
 ## Key decisions (log as made)
 
 - Source-of-truth format: **JSON** under `data/` (decision in Phase 2).
